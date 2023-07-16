@@ -8,8 +8,10 @@ const options = {
     database: config.db_name
 }
 
+newPool = db.createPool(options);
+
 module.exports = {
-    pool: db.createPool(options),
+    pool: newPool,
     mysql: db,
     options: options
 }

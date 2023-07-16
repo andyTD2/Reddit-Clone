@@ -6,6 +6,11 @@ const db = require("./../../db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 
+router.use(function(req, res, next) {
+    console.log("ACCOUNT CONTROLS MIDDLEWARE");
+    next();
+})
+
 router.get("/userLogout", async function(req, res)
     {
         if(req.session.loggedIn)
