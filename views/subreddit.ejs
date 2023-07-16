@@ -5,18 +5,20 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <TITLE> all subreddits</TITLE>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     </head>
     <body>
 		<div class="container">
 		
 			<div class="header">
         <div class="topbar"> topbar </div>
-        <div class="accountControls">account controls</div>
+		<%-include(accountControls)%>
+		<%=subredditName%>
 			</div>
 			
 			<div class="feed">
 				<div class="sidebar">
+					<a href="/createSubreddit.html">Create Subreddit!</a>
 				</div>
 				<p>one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten one two three four five six seven eight nine ten <p>
 			</div>

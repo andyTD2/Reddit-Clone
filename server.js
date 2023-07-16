@@ -5,9 +5,6 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 const sqlStore = require("express-mysql-session")(session);
-const db = require("./db");
-const dbCon = db.pool;
-const mysql = db.mysql;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -65,11 +62,12 @@ app.get('/', function(req, res) {
             accountControls: "noAccount.ejs"
         });
     }
-    //res.sendFile('public/index.html', {root: __dirname })
 });
 
 const accountControlRoutes = require('./routes/accountControls/accountControlRoutes');
+const subredditControlRoutes = require('./routes/subreddits/subbredditControls');
 app.use("/", accountControlRoutes);
+app.use("/", subredditControlRoutes);
 
 
 app.listen(port, function() {
