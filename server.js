@@ -1,3 +1,5 @@
+baseDir = __dirname;
+
 const http = require("http");
 const hostname = "127.0.0.1";
 const port = 3000;
@@ -9,7 +11,7 @@ const sqlStore = require("express-mysql-session")(session);
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const config = require('./credentials.json');
+const config = require(baseDir + '/config/credentials.json');
 const bodyParser = require("body-parser");
 
 const options = {
