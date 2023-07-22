@@ -1,3 +1,4 @@
+"use strict";
 require("express-async-errors")
 const errors = require("./error")
 
@@ -16,7 +17,7 @@ const bcrypt = require("bcrypt");
 */
 
 
-authenticateUser = async function(req, res) {
+const authenticateUser = async function(req, res) {
     if (req.session.loggedIn)
     {
         res.redirect("back");
@@ -44,14 +45,14 @@ authenticateUser = async function(req, res) {
 };
 
 
-logIn = function(username, id, req) {
+const logIn = function(username, id, req) {
     req.session.user = username;
     req.session.userID = id;
     req.session.loggedIn = true;
 }
 
 
-logOut = function(req)
+const logOut = function(req)
 {
     if(req.session.loggedIn)
     {
@@ -60,7 +61,7 @@ logOut = function(req)
 }
 
 
-createUser = async function(req, res)
+const createUser = async function(req, res)
 {
     //checking if username exists
     let sql = "SELECT * FROM users WHERE UPPER(userName) = UPPER(?);";
