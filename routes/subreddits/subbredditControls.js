@@ -6,6 +6,7 @@ const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const subreddit = require(baseDir + "/utils/subreddit");
+const posts = require(baseDir + "/routes/subreddits/postRoutes");
 
 /*
     This middleware checks if the subreddit the user is trying to access exists.
@@ -14,8 +15,10 @@ const subreddit = require(baseDir + "/utils/subreddit");
 
 router.use("/r/:subreddit", async function(req, res, next){
     console.log("SU");
-    if(await subredditExists(req.params.subreddit))
+    const result = await subreddit.subredditExists(req.params.subreddit);
+    if(result)
     {
+        req.subredditObj = subreddit.loadSubreddit(result);
         next();
     }
     else
@@ -24,15 +27,15 @@ router.use("/r/:subreddit", async function(req, res, next){
     }
 })
 
+router.get("/r/:subreddit", async function(req, res){
+    subreddit.createSubredditView(req, res);
+})
+
 
 router.post("/createSubreddit", async function(req, res) {
     subreddit.createSubreddit(req, res);
 })
 
-
-router.get("/r/:subreddit", async function(req, res){
-    subreddit.getSubreddit(req, res);
-})
 
 
 router.get("/r/:subreddit/newPost", async function(req, res) {
@@ -43,9 +46,7 @@ router.post("/r/:subreddit/newPost", async function(req, res) {
     subreddit.createPost(req, res);
 })
 
-router.get("/r/:subreddit/post/:postId", async function(req, res) {
-    
-})
+router.use("/r/:subreddit/post/", posts);
 
 
 module.exports = router;

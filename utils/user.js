@@ -64,7 +64,7 @@ const logOut = function(req)
 const createUser = async function(req, res)
 {
     //checking if username exists
-    let sql = "SELECT * FROM users WHERE UPPER(userName) = UPPER(?);";
+    let sql = "SELECT * FROM users WHERE userName = ?;";
     sql = mysql.format(sql, [req.body.username]);
     result = await dbCon.query(sql);
 
