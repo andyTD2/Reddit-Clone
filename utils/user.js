@@ -52,12 +52,13 @@ const logIn = function(username, id, req) {
 }
 
 
-const logOut = function(req)
+const logOut = function(req, res)
 {
     if(req.session.loggedIn)
     {
         req.session.destroy();
     }
+    res.redirect("/");
 }
 
 

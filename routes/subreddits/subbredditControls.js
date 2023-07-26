@@ -13,6 +13,7 @@ const posts = require(baseDir + "/routes/subreddits/postRoutes");
     If not, send 404, otherwise continue
 */
 
+
 router.use("/r/:subreddit", async function(req, res, next){
     console.log("SU");
     const result = await subreddit.subredditExists(req.params.subreddit);
@@ -27,24 +28,12 @@ router.use("/r/:subreddit", async function(req, res, next){
     }
 })
 
-router.get("/r/:subreddit", async function(req, res){
-    subreddit.createSubredditView(req, res);
-})
+
+router.get("/r/:subreddit", subreddit.createSubredditView);
 
 
-router.post("/createSubreddit", async function(req, res) {
-    subreddit.createSubreddit(req, res);
-})
+router.post("/createSubreddit", subreddit.createSubreddit);
 
-
-
-router.get("/r/:subreddit/newPost", async function(req, res) {
-    res.render("createPost", {createPostLink: `/r/${req.params.subreddit}/newPost`})
-})
-
-router.post("/r/:subreddit/newPost", async function(req, res) {
-    subreddit.createPost(req, res);
-})
 
 router.use("/r/:subreddit/post/", posts);
 

@@ -49,21 +49,14 @@ app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
+    params = {};
+
     if(req.session.loggedIn)
     {
-        account = req.session.user;
-        res.render("index", {
-            accountControls: "hasAccount.ejs", 
-            username: account
-        });
+        params.username = req.session.user;
     }
-    else
-    {
-        account = "noAccount.ejs";
-        res.render("index", {
-            accountControls: "noAccount.ejs"
-        });
-    }
+
+    res.render("index", params);
 });
 
 const accountControlRoutes = require('./routes/accountControls/accountControlRoutes');

@@ -72,18 +72,4 @@ const getPostsByNew = async function(subredditId) {
     return (await dbCon.query(query))[0];
 }
 
-const createPost = async function(req, res) {
-    if(!req.session.loggedIn)
-    {
-        res.send("You must be logged in to do that.");
-    }
-    else
-    {
-        let query = "INSERT INTO posts (title, content, subreddit_id, user_id) VALUES (?, ?, ?, ?)";
-        query = mysql.format(query, [req.body.postTitle, req.body.content, req.subredditObj.id, req.session.userID]);
-        let result = await dbCon.query(query);
-        res.redirect(`/r/${req.params.subreddit}/post/${result[0].insertId}`);
-    }
-}
-
-module.exports = {subredditExists, createSubreddit, createSubredditView, createPost, loadSubreddit};
+module.exports = {subredditExists, createSubreddit, createSubredditView, loadSubreddit};

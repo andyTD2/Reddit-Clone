@@ -34,6 +34,22 @@
 				<div class="post">
 					<%= post.title %>
 					<%= post.content %>
+					<div class="newcomment">
+						<form action="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment" method="POST">
+							<label for="comment">Text:</label>
+							<input type="text" id="comment" name="comment">
+							<input type="submit" value="Submit">
+						</form>
+					</div>
+					<div class="comments">
+						<% comments.forEach((comment) => { %>
+							<div>
+								<%= comment.userName %>
+								<%= comment.content %>
+								<%= comment.created_at %>
+							</div>
+						<% }) %>
+					</div>
 				</div>
 			</div>
 			
