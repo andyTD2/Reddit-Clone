@@ -6,24 +6,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <TITLE> all subreddits</TITLE>
     <link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/subreddit.css">
     </head>
     <body>
 		<div class="container">
 		
 			<div class="header">
-        <div class="topbar"> topbar </div>
-		<% if (locals.username) { %>
-			<div class="accountControls">
-				<a href=""><%=username%></a>
-				<a href="/userLogout">Log Out</a>
-			</div>
-		<% } else { %>
-			<div class="accountControls">
-				<a href="/signup.html">Create Account</a>
-				<a href="/login.html">Log In</a>
-			  </div>
-		<% } %>
-		<%= subreddit.name %>
+				<div class="topbar"> topbar </div>
+				<div class="headerControls">
+					<a href="/r/<%= subreddit.name %>"><%= subreddit.name %></a>
+					<%- include('partials/accountControls') %>
+				</div>
 			</div>
 			
 			<div class="feed">
@@ -32,9 +25,33 @@
 					<a href="/r/<%= subreddit.name %>/post/newPost"> Create Post</a>
 				</div>
 				<div class="posts">
+					<% timeSinceCreation = function(timeInMinutes) { %>
+						<% console.log(timeInMinutes); %>
+						<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
+						<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
+						<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
+						<% if (timeInMinutes < 43200) return `${Math.floor(timeInMinutes / 1440)} days ago`; %>
+						<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
+						<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
+					<% } %>
 					<% posts.forEach((post) => { %>
-						<div class="postTitle">
-							<a href="/r/<%= subreddit.name %>/post/<%= post.id %>"><%= post.title %></a>
+						<div class="post" data-postId="<%= post.id %>">
+							<div class="vote">
+								<div class="upvote">
+									UP
+								</div>
+								<div class="voteCount">
+									<%= post.numVotes %>
+								</div>
+								<div class="downvote">
+									DOWN
+								</div>
+							</div>
+							<div class="postRight">
+								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+								<div class="postInfo">submitted <%- timeSinceCreation(post.minutes_ago); %> by <%= post.userName %></div>
+								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
+							</div>
 						</div>
 					<% }) %>
 				</div>
@@ -42,4 +59,44 @@
 			
 		</div>
     </body>
+	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+	<script>
+		function sendVote(event, postId, voteDirection)
+		{
+			event.target.style.color ="#FF0000";
+			$.post(
+					"/r/testSub3/post/18/vote",
+					{
+						//1 for upvote -1 for downvote
+						direction: voteDirection
+					},
+					function(data, status){
+						if(voteDirection === 1)
+							event.target.style.color="blue";
+						else
+							event.target.style.color="red"
+					}
+				);
+		}
+
+		let posts = document.getElementsByClassName("post");
+		for (let post of posts)
+		{
+			post.getElementsByClassName("upvote")[0].addEventListener("click", 
+			(event) => {
+				sendVote(event, post.getAttribute("data-postId"), 1)
+			}, 
+			{once: true});
+
+			post.getElementsByClassName("downvote")[0].addEventListener("click", 
+			(event) => {
+				sendVote(event, post.getAttribute("data-postId"), -1)
+			}, 
+			{once: true});
+		}
+	</script>
 </html>

@@ -1,0 +1,11 @@
+<% if (locals.username) { %>
+    <div class="accountControls">
+        <a href=""><%=username%></a>
+        <a href="/userLogout">Log Out</a>
+    </div>
+<% } else { %>
+    <div class="accountControls">
+        <a href="/signup.html">Create Account</a>
+        <a href="/login.html">Log In</a>
+    </div>
+<% } %>

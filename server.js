@@ -49,7 +49,7 @@ app.use(express.static("public"));
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-    params = {};
+    params = {subreddit: {name: ""}};
 
     if(req.session.loggedIn)
     {

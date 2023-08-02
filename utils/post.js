@@ -3,6 +3,21 @@ const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 
+const getChildren = async function(postId, commentList) {
+    for (let comment of commentList)
+    {
+        let childCommentQuery = `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
+        LEFT JOIN users ON comments.user_id = users.id
+        WHERE post_id = ? AND parent_id = ?
+        ORDER BY created_at DESC LIMIT 50`;
+
+        childCommentQuery = mysql.format(childCommentQuery, [postId, comment.id]);
+        comment.children = (await dbCon.query(childCommentQuery))[0];
+        await getChildren(postId, comment.children);
+    }
+    return;
+}
+
 
 const loadPost = async function (req, res)
 {
@@ -16,13 +31,15 @@ const loadPost = async function (req, res)
     }
     else
     {
-        query = `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName FROM COMMENTS 
+        query = `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
         LEFT JOIN users ON comments.user_id = users.id
-        WHERE post_id = ? 
+        WHERE post_id = ? AND parent_id IS null
         ORDER BY created_at DESC LIMIT 50`;
 
         query = mysql.format(query, [req.params.postId]);
         let commentResult = (await dbCon.query(query))[0];
+
+        await getChildren(req.params.postId, commentResult);
 
         let params = {
             subreddit: req.subredditObj,
@@ -58,8 +75,9 @@ const createComment = async function(req, res) {
     }
     else
     {
-        let query = "INSERT INTO comments (content, user_id, post_id) VALUES (?, ?, ?)";
-        query = mysql.format(query, [req.body.comment, req.session.userID, req.params.postId]);
+        let queryValues = [req.body.comment, req.session.userID, req.params.postId, (req.body.parentId ? req.body.parentId : null)];
+        let query = "INSERT INTO comments (content, user_id, post_id, parent_id) VALUES (?, ?, ?, ?)";
+        query = mysql.format(query, queryValues);
         let result = (await dbCon.query(query))[0];
         res.redirect("back");
     }

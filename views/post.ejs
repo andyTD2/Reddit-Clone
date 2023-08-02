@@ -6,24 +6,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <TITLE> all subreddits</TITLE>
     <link rel="stylesheet" href="/css/styles.css">
+
+
     </head>
     <body>
+	
+
 		<div class="container">
 		
 			<div class="header">
-        <div class="topbar"> topbar </div>
-		<% if (locals.username) { %>
-			<div class="accountControls">
-				<a href=""><%=username%></a>
-				<a href="/userLogout">Log Out</a>
-			</div>
-		<% } else { %>
-			<div class="accountControls">
-				<a href="/signup.html">Create Account</a>
-				<a href="/login.html">Log In</a>
-			  </div>
-		<% } %>
-		<%= subreddit.name %>
+				<div class="topbar"> topbar </div>
+				<div class="headerControls">
+					<a href="/r/<%= subreddit.name %>"><%= subreddit.name %></a>
+					<%- include('partials/accountControls') %>
+				</div>
 			</div>
 			
 			<div class="feed">
@@ -37,17 +33,40 @@
 					<div class="newcomment">
 						<form action="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment" method="POST">
 							<label for="comment">Text:</label>
-							<input type="text" id="comment" name="comment">
+							<textarea rows="8" cols="50" id="comment" name="comment"></textarea>
 							<input type="submit" value="Submit">
 						</form>
 					</div>
 					<div class="comments">
-						<% comments.forEach((comment) => { %>
-							<div>
+						<% timeSinceCreation = function(timeInMinutes) { %>
+						<% console.log(timeInMinutes); %>
+						<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
+						<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
+						<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
+						<% if (timeInMinutes < 43200) return `${Math.floor(timeInMinutes / 1440)} days ago`; %>
+						<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
+						<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
+					<% } %>
+						<% function displayComment(comment) { %>
+							<div class="commentBox">
 								<%= comment.userName %>
 								<%= comment.content %>
-								<%= comment.created_at %>
+								<%- timeSinceCreation(comment.minutes_ago) %>
+								<div class="commentBox">
+									<button class="replyButton" onclick="createReplyBox(this)"> Reply </button>
+									<form style="display:none" class="replyForm" data-parentId="<%= comment.id %>">
+										<label for="comment">Reply Text:</label>
+										<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
+										<input type="button" onClick='postReply(this)'>
+									</form>
+								</div>
+								<% console.log(comment); %>
+								<% comment.children.forEach(displayComment) %>
 							</div>
+							
+						<% } %>
+						<% comments.forEach((comment) => { %>
+							<% displayComment(comment); %>
 						<% }) %>
 					</div>
 				</div>
@@ -55,4 +74,30 @@
 			
 		</div>
     </body>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+	<script>
+			
+			function createReplyBox(btn) {
+				console.log(btn.parentElement);
+				btn.parentElement.getElementsByClassName("replyForm")[0].style.display = "block";
+			}
+	
+			function postReply(btn)
+			{
+				$.post(
+					"/r/<%= subreddit.name %>/post/<%= post.id %>/newComment",
+					{
+						parentId: btn.parentElement.getAttribute("data-parentId"),
+						comment: btn.parentElement.getElementsByClassName("replyComment")[0].value
+					},
+					function(data, status){
+						alert("Data: " + data + "\nStatus: " + status);
+					}
+				);
+			}
+		</script>
 </html>

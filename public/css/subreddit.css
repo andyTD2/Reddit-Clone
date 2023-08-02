@@ -1,0 +1,39 @@
+
+.post {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid;
+    border-color: white;
+    padding-left: 20px;
+    display: flex;
+}
+
+.postRight {
+    word-break: break-word;
+}
+
+.postTitle{
+    font-size: 1.25rem;
+    text-decoration: none;
+    color: rgb(195, 195, 195);
+}
+
+.postTitle:visited {
+    color: rgb(143, 143, 143)
+}
+
+.postInfo, .postComments {
+    font-size: .7rem;
+    text-decoration: none;
+    color: rgb(143, 143, 143)
+}
+
+.postComments:hover{
+    text-decoration: underline;
+}
+
+.vote {
+    width: 50px;
+    align-self: center;
+    padding-right: 5px;
+}

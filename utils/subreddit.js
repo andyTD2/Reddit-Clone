@@ -67,9 +67,21 @@ const createSubredditView = async function(req, res) {
 }
 
 const getPostsByNew = async function(subredditId) {
-    let query = "select * from posts WHERE subreddit_id = ? ORDER BY created_at DESC LIMIT 20;";
+    let query = `SELECT POSTS.id, numVotes, title, content, created_at, subreddit_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    WHERE subreddit_id = ?
+    ORDER BY created_at DESC LIMIT 20`;
+
     query = mysql.format(query, [subredditId]);
-    return (await dbCon.query(query))[0];
+    let posts = (await dbCon.query(query))[0];
+
+    for (let post of posts)
+    {
+        query = "SELECT COUNT(*) FROM comments WHERE post_id = ?";
+        post.numComments = (await dbCon.query(`SELECT COUNT(*) as count FROM comments WHERE post_id = ${post.id}`))[0][0].count;
+    }
+
+    return posts;
 }
 
-module.exports = {subredditExists, createSubreddit, createSubredditView, loadSubreddit};
+module.exports = {subredditExists, createSubreddit, createSubredditView, loadSubreddit, getPostsByNew};
