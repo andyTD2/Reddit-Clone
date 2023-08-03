@@ -31,7 +31,7 @@ const authenticateUser = async function(req, res) {
 
     if (result.length > 1)
     {
-        throw new error(`Multiple users with username: ${req.body.username}`);
+        throw new Error(`Multiple users with username: ${req.body.username}`);
     }
 
     if(result.length === 0 || !(await bcrypt.compare(req.body.password, result[0].userPassword)))

@@ -15,9 +15,7 @@ router.post("/newPost", post.createPost);
 
 router.post("/:postId/newComment", post.createComment);
 
-router.post("/:postId/vote", (req, res) => {
-    console.log("Received");
-    res.send("sucess");});
+router.post("/:postId/vote", post.voteOnPost);
 
 
 

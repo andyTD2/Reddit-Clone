@@ -37,15 +37,23 @@
 					<% posts.forEach((post) => { %>
 						<div class="post" data-postId="<%= post.id %>">
 							<div class="vote">
-								<div class="upvote">
-									UP
-								</div>
+								<% if (post.voteDirection == 1) { %>
+									<img src="/images/up-arrow-green.png" class="upvote">
+								<%  } else {  %>
+									<img src="/images/up-arrow.png" class="upvote">
+								<% } %>
+
 								<div class="voteCount">
 									<%= post.numVotes %>
 								</div>
-								<div class="downvote">
-									DOWN
-								</div>
+
+								<% if (post.voteDirection == -1) { %>
+									<img src="/images/down-arrow-magenta.png" class="downvote">
+								<% } else { %>
+									<img src="/images/down-arrow.png" class="downvote">
+								<% } %>
+
+
 							</div>
 							<div class="postRight">
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
@@ -67,18 +75,36 @@
 	<script>
 		function sendVote(event, postId, voteDirection)
 		{
-			event.target.style.color ="#FF0000";
 			$.post(
-					"/r/testSub3/post/18/vote",
+					`/r/testSub3/post/${postId}/vote`,
 					{
 						//1 for upvote -1 for downvote
 						direction: voteDirection
 					},
 					function(data, status){
+						if(!locals.username) return;
 						if(voteDirection === 1)
-							event.target.style.color="blue";
+						{
+							event.target.parentElement.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
+							if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
+							{
+								event.target.setAttribute("src", "/images/up-arrow.png");
+							}
+							else
+							{
+								event.target.setAttribute("src", "/images/up-arrow-green.png");
+							}
+						}
 						else
-							event.target.style.color="red"
+						{
+							event.target.parentElement.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
+							if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
+							{
+								event.target.setAttribute("src", "/images/down-arrow.png");
+							}
+							else
+								event.target.setAttribute("src", "/images/down-arrow-magenta.png");
+						}
 					}
 				);
 		}
@@ -89,14 +115,12 @@
 			post.getElementsByClassName("upvote")[0].addEventListener("click", 
 			(event) => {
 				sendVote(event, post.getAttribute("data-postId"), 1)
-			}, 
-			{once: true});
+			});
 
 			post.getElementsByClassName("downvote")[0].addEventListener("click", 
 			(event) => {
 				sendVote(event, post.getAttribute("data-postId"), -1)
-			}, 
-			{once: true});
+			});
 		}
 	</script>
 </html>

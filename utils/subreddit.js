@@ -5,6 +5,7 @@ const errors = require("./error")
 const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
+const queryDb = db.queryDb;
 
 class Subreddit {
     constructor(id, name)
@@ -57,12 +58,18 @@ const createSubredditView = async function(req, res) {
     let params = {
         subreddit: req.subredditObj
     }
+    params.posts = await getPostsByNew(req.subredditObj.id);
+
     if (req.session.loggedIn)
     {
         params.username = req.session.user;
+        for (let post of params.posts)
+        {
+            let voteDirection = await queryDb("SELECT direction FROM postVotes WHERE user_id = ? AND post_id = ?", [req.session.userID, post.id]);
+            if(voteDirection.length > 0)
+                post.voteDirection = voteDirection[0].direction;
+        }
     }
-
-    params.posts = await getPostsByNew(req.subredditObj.id);
     res.render("subreddit", params);
 }
 
@@ -79,6 +86,7 @@ const getPostsByNew = async function(subredditId) {
     {
         query = "SELECT COUNT(*) FROM comments WHERE post_id = ?";
         post.numComments = (await dbCon.query(`SELECT COUNT(*) as count FROM comments WHERE post_id = ${post.id}`))[0][0].count;
+        post.voteDirection = 0;
     }
 
     return posts;

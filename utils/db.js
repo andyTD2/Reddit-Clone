@@ -8,15 +8,24 @@ const options = {
     database: config.db_name
 }
 
-newPool = db.createPool(options);
+let newPool = db.createPool(options);
 
 if (!newPool)
 {
     throw new error("Failed to connect do DB");
 }
 
+const queryDb = async function(sql, params)
+{
+    let query = db.format(sql, params);
+    let result = await newPool.query(query);
+    return result[0];
+}
+
+
 module.exports = {
     pool: newPool,
     mysql: db,
-    options: options
+    options: options,
+    queryDb
 }

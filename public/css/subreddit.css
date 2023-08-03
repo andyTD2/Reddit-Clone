@@ -4,7 +4,7 @@
     padding-bottom: 5px;
     border-top: 1px solid;
     border-color: white;
-    padding-left: 20px;
+    padding-left: 10px;
     display: flex;
 }
 
@@ -33,7 +33,17 @@
 }
 
 .vote {
-    width: 50px;
     align-self: center;
     padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.vote img {
+    width: 20px;
+    height: 15px;
+}
+
+.voteCount{
+    align-self: center;
 }
