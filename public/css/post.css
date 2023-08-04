@@ -1,0 +1,36 @@
+.commentBox {
+    margin-left: 30px;
+    margin-top: 10px;
+    margin-right: 5px;
+    border-radius: 2px;
+    padding: 5px;
+    padding-bottom: 10px;
+    overflow:hidden;
+}
+
+.even {
+    background-color: rgb(52, 52, 52);
+}
+
+.odd {
+    background-color: rgb(36, 36, 36);
+}
+
+.commentContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.commentUserName, .timeSinceCommentCreation {
+    font-size: .7rem;
+}
+
+.commentBody {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.vote img {
+    width: 20px;
+    height: 15px;
+}

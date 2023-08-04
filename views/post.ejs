@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <TITLE> all subreddits</TITLE>
     <link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/post.css">
 
 
     </head>
@@ -47,26 +48,49 @@
 						<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
 						<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
 					<% } %>
-						<% function displayComment(comment) { %>
-							<div class="commentBox">
-								<%= comment.userName %>
-								<%= comment.content %>
-								<%- timeSinceCreation(comment.minutes_ago) %>
-								<div class="commentBox">
-									<button class="replyButton" onclick="createReplyBox(this)"> Reply </button>
-									<form style="display:none" class="replyForm" data-parentId="<%= comment.id %>">
-										<label for="comment">Reply Text:</label>
-										<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
-										<input type="button" onClick='postReply(this)'>
-									</form>
+						<% function displayComment(comment, evens) { %>
+							<% if (evens) { %>
+								<div class="commentBox even" data-commentId="<%= comment.id %>">
+							<% } else { %>
+								<div class="commentBox odd" data-commentId="<%= comment.id %>">
+							<% } %>
+									<div class="vote">
+										<% if (comment.voteDirection == 1) { %>
+											<img src="/images/up-arrow-green.png" class="upvote">
+										<%  } else {  %>
+											<img src="/images/up-arrow.png" class="upvote">
+										<% } %>
+
+										<div class="voteCount">
+											<%= comment.numVotes %>
+										</div>
+
+										<% if (comment.voteDirection == -1) { %>
+											<img src="/images/down-arrow-magenta.png" class="downvote">
+										<% } else { %>
+											<img src="/images/down-arrow.png" class="downvote">
+										<% } %>
+									</div>
+
+									<div class="commentContent">
+										<div class="commentUserName">comment by <%= comment.userName %></div>
+										<div class="commentBody"><%= comment.content %></div>
+										<div class="timeSinceCommentCreation"><%- timeSinceCreation(comment.minutes_ago) %></div>
+									</div>
+									<div class="replyBox">
+										<button class="replyButton" onclick="createReplyBox(this)"> Reply </button>
+										<form style="display:none" class="replyForm" data-parentId="<%= comment.id %>">
+											<label for="comment">Reply Text:</label>
+											<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
+											<input type="button" onClick='postReply(this)'>
+										</form>
+									</div>
+									<% comment.children.forEach((comment) => {displayComment(comment, !evens);}) %>
 								</div>
-								<% console.log(comment); %>
-								<% comment.children.forEach(displayComment) %>
-							</div>
 							
 						<% } %>
 						<% comments.forEach((comment) => { %>
-							<% displayComment(comment); %>
+							<% displayComment(comment, true); %>
 						<% }) %>
 					</div>
 				</div>
@@ -80,24 +104,75 @@
 		crossorigin="anonymous">
 	</script>
 	<script>
-			
-			function createReplyBox(btn) {
-				console.log(btn.parentElement);
-				btn.parentElement.getElementsByClassName("replyForm")[0].style.display = "block";
-			}
-	
-			function postReply(btn)
-			{
-				$.post(
-					"/r/<%= subreddit.name %>/post/<%= post.id %>/newComment",
+		
+		function createReplyBox(btn) {
+			console.log(btn.parentElement);
+			btn.parentElement.getElementsByClassName("replyForm")[0].style.display = "block";
+		}
+
+		function postReply(btn)
+		{
+			$.post(
+				"/r/<%= subreddit.name %>/post/<%= post.id %>/newComment",
+				{
+					parentId: btn.parentElement.getAttribute("data-parentId"),
+					comment: btn.parentElement.getElementsByClassName("replyComment")[0].value
+				},
+				function(data, status){
+					alert("Data: " + data + "\nStatus: " + status);
+				}
+			);
+		}
+
+
+		function sendCommentVote(event, commentId, voteDirection)
+		{
+			$.post(
+				`/r/<%= subreddit.name %>/post/comment/${commentId}/vote`,
+				{
+					//1 for upvote -1 for downvote
+					direction: voteDirection
+				},
+				function(data, status){
+					if(voteDirection === 1)
 					{
-						parentId: btn.parentElement.getAttribute("data-parentId"),
-						comment: btn.parentElement.getElementsByClassName("replyComment")[0].value
-					},
-					function(data, status){
-						alert("Data: " + data + "\nStatus: " + status);
+						event.target.parentElement.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
+						if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
+						{
+							event.target.setAttribute("src", "/images/up-arrow.png");
+						}
+						else
+						{
+							event.target.setAttribute("src", "/images/up-arrow-green.png");
+						}
 					}
-				);
-			}
+					else
+					{
+						event.target.parentElement.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
+						if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
+						{
+							event.target.setAttribute("src", "/images/down-arrow.png");
+						}
+						else
+							event.target.setAttribute("src", "/images/down-arrow-magenta.png");
+					}
+				}
+			);
+		}
+
+		let comments = document.getElementsByClassName("commentBox");
+		for (let comment of comments)
+		{
+			comment.getElementsByClassName("upvote")[0].addEventListener("click", 
+			(event) => {
+				sendCommentVote(event, comment.getAttribute("data-commentId"), 1)
+			});
+
+			comment.getElementsByClassName("downvote")[0].addEventListener("click", 
+			(event) => {
+				sendCommentVote(event, comment.getAttribute("data-commentId"), -1)
+			});
+		}
+
 		</script>
 </html>

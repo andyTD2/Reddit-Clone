@@ -17,6 +17,8 @@ router.post("/:postId/newComment", post.createComment);
 
 router.post("/:postId/vote", post.voteOnPost);
 
+router.post("/comment/:commentId/vote", post.voteOnComment);
+
 
 
 module.exports = router;

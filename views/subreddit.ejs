@@ -73,16 +73,15 @@
 		crossorigin="anonymous">
 	</script>
 	<script>
-		function sendVote(event, postId, voteDirection)
+		function sendPostVote(event, postId, voteDirection)
 		{
 			$.post(
-					`/r/testSub3/post/${postId}/vote`,
+					`/r/<%= subreddit.name %>/post/${postId}/vote`,
 					{
 						//1 for upvote -1 for downvote
 						direction: voteDirection
 					},
 					function(data, status){
-						if(!locals.username) return;
 						if(voteDirection === 1)
 						{
 							event.target.parentElement.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
@@ -114,12 +113,12 @@
 		{
 			post.getElementsByClassName("upvote")[0].addEventListener("click", 
 			(event) => {
-				sendVote(event, post.getAttribute("data-postId"), 1)
+				sendPostVote(event, post.getAttribute("data-postId"), 1)
 			});
 
 			post.getElementsByClassName("downvote")[0].addEventListener("click", 
 			(event) => {
-				sendVote(event, post.getAttribute("data-postId"), -1)
+				sendPostVote(event, post.getAttribute("data-postId"), -1)
 			});
 		}
 	</script>
