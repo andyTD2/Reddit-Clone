@@ -1,0 +1,8 @@
+:root {
+    --main-font-color: rgb(224, 224, 224);
+    --main-bg-color: rgb(36, 36, 36);
+    --alt-bg-color: rgb(52, 52, 52);
+    --alt-bg-color-two: rgb(70, 70, 70);
+    --font-size-small: .6rem;
+    --font-size-mid: .75rem;
+}

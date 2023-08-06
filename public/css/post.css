@@ -1,3 +1,5 @@
+@import './constants.css';
+
 .commentBox {
     margin-left: 30px;
     margin-top: 10px;
@@ -5,24 +7,26 @@
     border-radius: 2px;
     padding: 5px;
     padding-bottom: 10px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
 .even {
-    background-color: rgb(52, 52, 52);
+    background-color: var(--alt-bg-color);
 }
 
 .odd {
-    background-color: rgb(36, 36, 36);
+    background-color: var(--main-bg-color);
 }
 
 .commentContent {
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    width: 100%;
 }
 
-.commentUserName, .timeSinceCommentCreation {
-    font-size: .7rem;
+.commentTop {
+    font-size: var(--font-size-small);
 }
 
 .commentBody {
@@ -30,7 +34,75 @@
     padding-bottom: 3px;
 }
 
+.vote{
+    display:flex;
+    flex-direction: column;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.voteCount{
+    font-size: var(--font-size-mid);
+    align-self: center;
+}
+
 .vote img {
     width: 20px;
     height: 15px;
+}
+
+.comment{
+    display: flex;
+}
+
+.commentForm {
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+}
+
+.commentForm input {
+    border: none;
+    background-color: var(--alt-bg-color-two);
+    align-self: start;
+    cursor: pointer;
+    color: var(--main-font-color);
+}
+
+.commentForm input:hover {
+    text-decoration: underline;
+}
+
+.commentForm label {
+    font-size: var(--font-size-small);
+}
+
+.commentForm textarea {
+    width: 75%;
+    height: 125px;
+    background-color: var(--alt-bg-color-two);
+    color: var(--main-font-color)
+}
+
+
+.replyBox {
+    line-height: 0px;
+}
+
+
+.replyButton {
+    border: none;
+    background-color: transparent;
+    color: var(--main-font-color);
+    cursor: pointer;
+    padding: 0;
+    font-size: var(--font-size-small);
+}
+
+.replyButton:hover {
+    text-decoration: underline;
+}
+
+.newParentComment{
+    padding-left: 30px;
 }

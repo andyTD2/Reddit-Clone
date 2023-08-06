@@ -31,10 +31,10 @@
 				<div class="post">
 					<%= post.title %>
 					<%= post.content %>
-					<div class="newcomment">
-						<form action="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment" method="POST">
-							<label for="comment">Text:</label>
-							<textarea rows="8" cols="50" id="comment" name="comment"></textarea>
+					<div class="newParentComment">
+						<form action="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment" method="POST" class="commentForm">
+							<label for="comment">post a new comment:</label>
+							<textarea id="comment" name="comment"></textarea>
 							<input type="submit" value="Submit">
 						</form>
 					</div>
@@ -54,36 +54,36 @@
 							<% } else { %>
 								<div class="commentBox odd" data-commentId="<%= comment.id %>">
 							<% } %>
-									<div class="vote">
-										<% if (comment.voteDirection == 1) { %>
-											<img src="/images/up-arrow-green.png" class="upvote">
-										<%  } else {  %>
-											<img src="/images/up-arrow.png" class="upvote">
-										<% } %>
+									<div class="comment">
+										<div class="vote">
+											<% if (comment.voteDirection == 1) { %>
+												<img src="/images/up-arrow-green.png" class="upvote">
+											<%  } else {  %>
+												<img src="/images/up-arrow.png" class="upvote">
+											<% } %>
 
-										<div class="voteCount">
-											<%= comment.numVotes %>
+											<div class="voteCount">
+												<%= comment.numVotes %>
+											</div>
+
+											<% if (comment.voteDirection == -1) { %>
+												<img src="/images/down-arrow-magenta.png" class="downvote">
+											<% } else { %>
+												<img src="/images/down-arrow.png" class="downvote">
+											<% } %>
 										</div>
 
-										<% if (comment.voteDirection == -1) { %>
-											<img src="/images/down-arrow-magenta.png" class="downvote">
-										<% } else { %>
-											<img src="/images/down-arrow.png" class="downvote">
-										<% } %>
-									</div>
-
-									<div class="commentContent">
-										<div class="commentUserName">comment by <%= comment.userName %></div>
-										<div class="commentBody"><%= comment.content %></div>
-										<div class="timeSinceCommentCreation"><%- timeSinceCreation(comment.minutes_ago) %></div>
-									</div>
-									<div class="replyBox">
-										<button class="replyButton" onclick="createReplyBox(this)"> Reply </button>
-										<form style="display:none" class="replyForm" data-parentId="<%= comment.id %>">
-											<label for="comment">Reply Text:</label>
-											<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
-											<input type="button" onClick='postReply(this)'>
-										</form>
+										<div class="commentContent">
+											<div class="commentTop">comment by <%= comment.userName %> <%- timeSinceCreation(comment.minutes_ago) %></div>
+											<div class="commentBody"><%= comment.content %></div>
+											<div class="replyBox">
+												<button class="replyButton" onclick="createReplyBox(this)"> reply </button>
+												<form style="display:none" class="commentForm" data-parentId="<%= comment.id %>" id="x">
+													<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
+													<input class="submitReply" type="button" onClick='postReply(this)' value="Submit">
+												</form>
+											</div>
+										</div>
 									</div>
 									<% comment.children.forEach((comment) => {displayComment(comment, !evens);}) %>
 								</div>
@@ -106,8 +106,12 @@
 	<script>
 		
 		function createReplyBox(btn) {
-			console.log(btn.parentElement);
-			btn.parentElement.getElementsByClassName("replyForm")[0].style.display = "block";
+			let box = btn.parentElement.getElementsByClassName("commentForm")[0];
+			if(box.style.display == "none")
+				box.style.display = "flex";
+			else
+				box.style.display = "none";
+
 		}
 
 		function postReply(btn)

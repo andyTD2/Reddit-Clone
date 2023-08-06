@@ -1,6 +1,7 @@
+@import './constants.css';
 
 div {
-    color: rgb(224, 224, 224);
+    color: var(--main-font-color);
 }
 
 body {
@@ -38,12 +39,12 @@ body {
 
 .headerControls a{
     align-self: flex-end;
-    padding-left: 20px;
+    padding-left: 30px;
 }
 
 .feed {
     grid-column: 1 / 2;
-    background-color: rgb(36, 36, 36);
+    background-color: var(--main-bg-color);
     overflow-wrap: break-word;
 }
 
