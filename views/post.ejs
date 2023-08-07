@@ -11,7 +11,15 @@
 
     </head>
     <body>
-	
+		<% timeSinceCreation = function(timeInMinutes) { %>
+			<% console.log(timeInMinutes); %>
+			<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
+			<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
+			<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
+			<% if (timeInMinutes < 43200) return `${Math.floor(timeInMinutes / 1440)} days ago`; %>
+			<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
+			<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
+		<% } %>
 
 		<div class="container">
 		
@@ -29,8 +37,34 @@
 					<a href="/r/<%= subreddit.name %>/newPost"> Create Post</a>
 				</div>
 				<div class="post">
-					<%= post.title %>
-					<%= post.content %>
+					<div class="postContent">
+						<div class="postLeft">
+							<div id="postVote" class="vote" data-postId="<%= post.id %>">
+								<% if (post.voteDirection == 1) { %>
+									<img src="/images/up-arrow-green.png" class="upvote">
+								<%  } else {  %>
+									<img src="/images/up-arrow.png" class="upvote">
+								<% } %>
+
+								<div class="voteCount">
+									<%=post.numVotes%>
+								</div>
+
+								<% if (post.voteDirection == -1) { %>
+									<img src="/images/down-arrow-magenta.png" class="downvote">
+								<% } else { %>
+									<img src="/images/down-arrow.png" class="downvote">
+								<% } %>
+
+
+							</div>
+						</div>
+						<div class="postRight">
+							<div class="postTitle"><%= post.title %></div>
+							<div class="postTop">submitted <%- timeSinceCreation(post.minutes_ago) %> by <%= post.userName %></div>
+							<div class="postBody"><%= post.content %></div>
+						</div>
+					</div>
 					<div class="newParentComment">
 						<form action="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment" method="POST" class="commentForm">
 							<label for="comment">post a new comment:</label>
@@ -39,15 +73,7 @@
 						</form>
 					</div>
 					<div class="comments">
-						<% timeSinceCreation = function(timeInMinutes) { %>
-						<% console.log(timeInMinutes); %>
-						<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
-						<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
-						<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
-						<% if (timeInMinutes < 43200) return `${Math.floor(timeInMinutes / 1440)} days ago`; %>
-						<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
-						<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
-					<% } %>
+						<div class="numComments"><%= post.numComments %> comments</div>
 						<% function displayComment(comment, evens) { %>
 							<% if (evens) { %>
 								<div class="commentBox even" data-commentId="<%= comment.id %>">
@@ -63,7 +89,7 @@
 											<% } %>
 
 											<div class="voteCount">
-												<%= comment.numVotes %>
+												<%=comment.numVotes%>
 											</div>
 
 											<% if (comment.voteDirection == -1) { %>
@@ -116,6 +142,7 @@
 
 		function postReply(btn)
 		{
+			console.log("from ejs <%= post.id %>");
 			$.post(
 				"/r/<%= subreddit.name %>/post/<%= post.id %>/newComment",
 				{
@@ -123,7 +150,7 @@
 					comment: btn.parentElement.getElementsByClassName("replyComment")[0].value
 				},
 				function(data, status){
-					alert("Data: " + data + "\nStatus: " + status);
+					alert("<%= post.id %> Data: " + data + "\nStatus: " + status);
 				}
 			);
 		}
@@ -138,9 +165,12 @@
 					direction: voteDirection
 				},
 				function(data, status){
+					let parentOfThisDiv = event.target.parentElement;
+					let voteCount = parentOfThisDiv.getElementsByClassName("voteCount")[0];
+
 					if(voteDirection === 1)
 					{
-						event.target.parentElement.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
+						parentOfThisDiv.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
 						if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
 						{
 							event.target.setAttribute("src", "/images/up-arrow.png");
@@ -152,7 +182,7 @@
 					}
 					else
 					{
-						event.target.parentElement.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
+						parentOfThisDiv.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
 						if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
 						{
 							event.target.setAttribute("src", "/images/down-arrow.png");
@@ -160,6 +190,7 @@
 						else
 							event.target.setAttribute("src", "/images/down-arrow-magenta.png");
 					}
+					voteCount.textContent = parseInt(voteCount.textContent) + parseInt(data);
 				}
 			);
 		}
@@ -178,5 +209,58 @@
 			});
 		}
 
+
+		let postVote = document.getElementById("postVote");
+		postVote.getElementsByClassName("upvote")[0].addEventListener("click", 
+		(event) => {
+			sendPostVote(event, postVote.getAttribute("data-postId"), 1)
+		});
+
+		postVote.getElementsByClassName("downvote")[0].addEventListener("click", 
+		(event) => {
+			sendPostVote(event, postVote.getAttribute("data-postId"), -1)
+		});
+
+
+		function sendPostVote(event, postId, voteDirection)
+		{
+			$.post(
+					`/r/<%= subreddit.name %>/post/${postId}/vote`,
+					{
+						//1 for upvote -1 for downvote
+						direction: voteDirection
+					},
+					function(data, status){
+						let parentOfThisDiv = event.target.parentElement;
+						let voteCount = parentOfThisDiv.getElementsByClassName("voteCount")[0];
+
+						if(voteDirection === 1)
+						{
+							parentOfThisDiv.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
+							if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
+							{
+								event.target.setAttribute("src", "/images/up-arrow.png");
+							}
+							else
+							{
+								event.target.setAttribute("src", "/images/up-arrow-green.png");
+							}
+						}
+						else
+						{
+							parentOfThisDiv.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
+							if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
+							{
+								event.target.setAttribute("src", "/images/down-arrow.png");
+							}
+							else
+							{
+								event.target.setAttribute("src", "/images/down-arrow-magenta.png");
+							}
+						}
+						voteCount.textContent = parseInt(voteCount.textContent) + parseInt(data);
+					}
+				);
+		}
 		</script>
 </html>

@@ -52,8 +52,6 @@
 								<% } else { %>
 									<img src="/images/down-arrow.png" class="downvote">
 								<% } %>
-
-
 							</div>
 							<div class="postRight">
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
@@ -82,9 +80,12 @@
 						direction: voteDirection
 					},
 					function(data, status){
+
+						let parentOfThisDiv = event.target.parentElement;
+						let voteCount = parentOfThisDiv.getElementsByClassName("voteCount")[0];
 						if(voteDirection === 1)
 						{
-							event.target.parentElement.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
+							parentOfThisDiv.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
 							if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
 							{
 								event.target.setAttribute("src", "/images/up-arrow.png");
@@ -96,7 +97,7 @@
 						}
 						else
 						{
-							event.target.parentElement.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
+							parentOfThisDiv.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
 							if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
 							{
 								event.target.setAttribute("src", "/images/down-arrow.png");
@@ -104,6 +105,7 @@
 							else
 								event.target.setAttribute("src", "/images/down-arrow-magenta.png");
 						}
+						voteCount.textContent = parseInt(voteCount.textContent) + parseInt(data);
 					}
 				);
 		}

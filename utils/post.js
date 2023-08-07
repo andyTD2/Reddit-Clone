@@ -5,7 +5,51 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const getChildren = async function(postId, commentList, userId) {
+async function getCommentVoteDirection(userId, commentId)
+{
+    if(!userId) return 0;
+
+    let result = await queryDb("SELECT direction FROM commentVotes WHERE user_id = ? AND comment_id = ?", [userId, commentId]);
+    if (result.length === 0) return 0;
+    if (result.length > 1) throw new Error(`Duplicate commentVote records for user: ${userId} on comment: ${commentId}`);
+    if (result[0].direction != -1 && result[0].direction != 1) throw new Error(`Invalid vote direction: ${result[0].direction} for table: commentVotes for user: ${userId} on comnment: ${commentId}`);
+    
+    return result[0].direction;
+
+}
+
+async function getPostData(userId, postId)
+{
+    let query = `SELECT POSTS.id, title, numVotes, content, subreddit_id, user_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) as minutes_ago from posts 
+    LEFT JOIN users ON posts.user_id = users.id
+    WHERE posts.id = ?;`;
+
+    let result = await queryDb(query, [postId]);
+    if(result.length == 0) return undefined;
+
+    let numComments = await queryDb("SELECT COUNT(*) AS count FROM COMMENTS WHERE post_id = ?", [postId]);
+    result[0].numComments = numComments[0].count;
+
+    result[0].voteDirection = await getPostVoteDirection(userId, postId);
+
+    return result[0];
+}
+
+async function getCommentData(postId, userId)
+{
+    let result = await queryDb(
+                                `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
+                                LEFT JOIN users ON comments.user_id = users.id
+                                WHERE post_id = ? AND parent_id IS null
+                                ORDER BY created_at DESC LIMIT 50`,
+                                [postId]
+    );
+
+    await getChildrenOfComment(result, postId, userId);
+    return result;
+}
+
+const getChildrenOfComment = async function(commentList, postId, userId) {
     for (let comment of commentList)
     {
         comment.voteDirection = await getCommentVoteDirection(userId, comment.id);
@@ -17,57 +61,31 @@ const getChildren = async function(postId, commentList, userId) {
 
         childCommentQuery = mysql.format(childCommentQuery, [postId, comment.id]);
         comment.children = (await dbCon.query(childCommentQuery))[0];
-        await getChildren(postId, comment.children, userId);
+        await getChildrenOfComment(comment.children, postId, userId);
     }
     return;
 }
 
-async function getCommentVoteDirection(userId, commentId)
-{
-    if(!userId)
-    {
-        return 0;
-    }
-
-    let voteDirection = await queryDb("SELECT direction FROM commentVotes WHERE user_id = ? AND comment_id = ?", [userId, commentId]);
-    if(voteDirection.length > 0)
-        return voteDirection[0].direction;
-    return 0;
-}
-
 const loadPost = async function (req, res)
 {
-    let query = "SELECT * from posts WHERE id = ?;";
-    query = mysql.format(query, [req.params.postId]);
-    let result = (await dbCon.query(query))[0];
+    let postData = await getPostData(req.session.userID, req.params.postId);
 
-    if(result.length == 0)
+    if(!postData)
     {
         res.status(404).send("Page not found.");
+        return;
     }
-    else
-    {
-        query = `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
-        LEFT JOIN users ON comments.user_id = users.id
-        WHERE post_id = ? AND parent_id IS null
-        ORDER BY created_at DESC LIMIT 50`;
 
-        query = mysql.format(query, [req.params.postId]);
-        let commentResult = (await dbCon.query(query))[0];
+    let commentData = await getCommentData(req.params.postId, req.session.userID);
 
-        await getChildren(req.params.postId, commentResult, req.session.userID);
-
-        let params = {
-            subreddit: req.subredditObj,
-            post: result[0],
-            comments: commentResult
-        }
-        if (req.session.loggedIn)
-        {
-            params.username = req.session.user;
-        }
-        res.render(baseDir + "/views/post", params);
+    let params = {
+        subreddit: req.subredditObj,
+        post: postData,
+        comments: commentData,
+        username: req.session.loggedIn ? req.session.user : undefined
     }
+    console.log(postData);
+    res.render(baseDir + "/views/post", params);
 }
 
 const createPost = async function(req, res) {
@@ -91,6 +109,7 @@ const createComment = async function(req, res) {
     }
     else
     {
+        console.log("posTId", req.params.postId);
         let queryValues = [req.body.comment, req.session.userID, req.params.postId, (req.body.parentId ? req.body.parentId : null)];
         let query = "INSERT INTO comments (content, user_id, post_id, parent_id) VALUES (?, ?, ?, ?)";
         query = mysql.format(query, queryValues);
@@ -106,7 +125,7 @@ const voteOnPost = async function(req, res) {
     }
     else
     {
-        let userVote = await getUserVoteOnPost(req.session.userID, req.params.postId);
+        let userVote = await getPostVoteDirection(req.session.userID, req.params.postId);
         let changeInVote = 0;
         if(userVote == 0) //user hasn't voted on this post; create new vote entry
         {
@@ -128,12 +147,14 @@ const voteOnPost = async function(req, res) {
         //Need to update numVotes in posts table with the new vote
         await queryDb("UPDATE posts SET numVotes = numVotes + ? WHERE id = ?", [changeInVote, req.params.postId]);
 
-        res.send(`Sucessfully added ${req.body.direction} votes to post: ${req.params.postId}`);
+        res.send(`${changeInVote}`);
     }
 }
 
-async function getUserVoteOnPost(userId, postId)
+async function getPostVoteDirection(userId, postId)
 {
+    if(!userId) return 0;
+
     let result = await queryDb("SELECT * FROM postVotes WHERE user_id = ? AND post_id = ?", [userId, postId]);
     if (result.length === 0) return 0;
     if (result.length > 1) throw new Error(`Duplicate postVote records for user: ${userId} on post: ${postId}`);
@@ -148,7 +169,7 @@ const voteOnComment = async function(req, res) {
     }
     else
     {
-        let userVote = await getUserVoteOnComment(req.session.userID, req.params.commentId);
+        let userVote = await getCommentVoteDirection(req.session.userID, req.params.commentId);
         let changeInVote = 0;
         if(userVote == 0) //user hasn't voted on this comment; create new vote entry
         {
@@ -170,18 +191,10 @@ const voteOnComment = async function(req, res) {
         //Need to update numVotes in comments table with the new vote
         await queryDb("UPDATE comments SET numVotes = numVotes + ? WHERE id = ?", [changeInVote, req.params.commentId]);
 
-        res.send(`Sucessfully added ${req.body.direction} votes to comment: ${req.params.commentId}`);
+        res.send(`${changeInVote}`);
     }
 }
 
-async function getUserVoteOnComment(userId, commentId)
-{
-    let result = await queryDb("SELECT * FROM commentVotes WHERE user_id = ? AND comment_id = ?", [userId, commentId]);
-    if (result.length === 0 ) return 0;
-    if (result.length > 1) throw new Error(`Duplicate commentVote records for user: ${userId} on comment: ${commentId}`);
-    if (result[0].direction != -1 && result[0].direction != 1) throw new Error(`Invalid vote direction: ${result[0].direction} for table: commentVotes for user: ${userId} on comment ${commentId}`);
-    return result[0].direction;
-}
 
 
 module.exports = {loadPost, createPost, createComment, voteOnPost, voteOnComment};

@@ -2,7 +2,7 @@
 
 .commentBox {
     margin-left: 30px;
-    margin-top: 10px;
+    margin-bottom: 10px;
     margin-right: 5px;
     border-radius: 2px;
     padding: 5px;
@@ -41,6 +41,11 @@
     margin-right: 5px;
 }
 
+#postVote {
+    margin-left: 0px;
+    margin-right: 10px;
+}
+
 .voteCount{
     font-size: var(--font-size-mid);
     align-self: center;
@@ -50,6 +55,9 @@
     width: 20px;
     height: 15px;
 }
+
+
+
 
 .comment{
     display: flex;
@@ -84,6 +92,10 @@
     color: var(--main-font-color)
 }
 
+.numComments{
+    font-size: var(--font-size-small);
+    padding-left: 30px;
+}
 
 .replyBox {
     line-height: 0px;
@@ -105,4 +117,35 @@
 
 .newParentComment{
     padding-left: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.postContent {
+    background-color: var(--alt-bg-color-two);
+    margin-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+
+    border-bottom-style: solid;
+    border-width: 2px;
+    border-color: white;
+
+    overflow-x: hidden;
+    display: flex;
+}
+
+.postTop {
+    font-size: var(--font-size-small);
+}
+
+
+.postTitle {
+    font-size: var(--font-size-large);
+}
+
+.postBody {
+    padding-top: 10px;
 }
