@@ -5,6 +5,8 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
+const {updateRank, calculateRank} = require(baseDir + "/utils/updateRanking");
+
 async function getCommentVoteDirection(userId, commentId)
 {
     if(!userId) return 0;
@@ -95,10 +97,11 @@ const createPost = async function(req, res) {
     }
     else
     {
-        let query = "INSERT INTO posts (title, content, subreddit_id, user_id) VALUES (?, ?, ?, ?)";
-        query = mysql.format(query, [req.body.postTitle, req.body.content, req.subredditObj.id, req.session.userID]);
-        let result = await dbCon.query(query);
-        res.redirect(`/r/${req.params.subreddit}/post/${result[0].insertId}`);
+        let rankScore = calculateRank(1, new Date());
+        let result = await queryDb("INSERT INTO posts (title, content, subreddit_id, user_id, score) VALUES (?, ?, ?, ?, ?)",
+                                    [req.body.postTitle, req.body.content, req.subredditObj.id, req.session.userID, rankScore]);
+
+        res.redirect(`/r/${req.params.subreddit}/post/${result.insertId}`);
     }
 }
 
@@ -146,6 +149,9 @@ const voteOnPost = async function(req, res) {
 
         //Need to update numVotes in posts table with the new vote
         await queryDb("UPDATE posts SET numVotes = numVotes + ? WHERE id = ?", [changeInVote, req.params.postId]);
+
+        //After updating votes, we have to recalculate the rank
+        updateRank(req.params.postId);
 
         res.send(`${changeInVote}`);
     }

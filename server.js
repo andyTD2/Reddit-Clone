@@ -1,4 +1,4 @@
-baseDir = __dirname;
+global.baseDir = __dirname;
 
 const http = require("http");
 const hostname = "127.0.0.1";
@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 const session = require("express-session");
 const sqlStore = require("express-mysql-session")(session);
+const runService = require(baseDir + "/utils/runService").runService;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -68,3 +69,6 @@ app.use("/", subredditControlRoutes);
 app.listen(port, function() {
     console.log("App listening on port 3000");
 });
+
+
+runService(baseDir + "/services/updateRankings", 1000 * 60 * 1);

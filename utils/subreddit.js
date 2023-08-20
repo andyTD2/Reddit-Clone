@@ -7,6 +7,25 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
+const filters = {
+
+    hot: `SELECT POSTS.id, numVotes, title, content, created_at, subreddit_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    WHERE subreddit_id = ?
+    ORDER BY score DESC LIMIT 20`,
+
+    new: `SELECT POSTS.id, numVotes, title, content, created_at, subreddit_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    WHERE subreddit_id = ?
+    ORDER BY created_at DESC LIMIT 20`,
+
+    top: `SELECT POSTS.id, numVotes, title, content, created_at, subreddit_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    WHERE subreddit_id = ?
+    ORDER BY numVotes DESC, created_at DESC LIMIT 20`
+}
+
+
 class Subreddit {
     constructor(id, name)
     {
@@ -48,17 +67,25 @@ const createSubreddit = async function(req, res) {
         {
             let query = "INSERT INTO subreddits (title, description, sidebar, createdBy) VALUES(?, ?, ?, ?)"
             query = mysql.format(query, [req.body.subredditName, req.body.description, req.body.sidebar, req.session.userID]);
-            result = await dbCon.query(query);
+            let result = await dbCon.query(query);
             res.redirect(`/r/${req.body.subredditName}`);
         }
     }
 }
 
 const createSubredditView = async function(req, res) {
+    if(!req.params.filter) req.params.filter = "hot";
+
     let params = {
         subreddit: req.subredditObj
     }
-    params.posts = await getPostsByNew(req.subredditObj.id);
+    params.posts = await getPosts(req.subredditObj.id, req.params.filter);
+    if(!params.posts)
+    { 
+        res.status(404).send("Page not found.");
+        return;
+    }
+
 
     if (req.session.loggedIn)
     {
@@ -73,11 +100,12 @@ const createSubredditView = async function(req, res) {
     res.render("subreddit", params);
 }
 
-const getPostsByNew = async function(subredditId) {
-    let query = `SELECT POSTS.id, numVotes, title, content, created_at, subreddit_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
-    LEFT JOIN users ON posts.user_id = users.id
-    WHERE subreddit_id = ?
-    ORDER BY created_at DESC LIMIT 20`;
+
+
+const getPosts = async function(subredditId, filter) {
+    let query = filters[filter];
+
+    if (!query) return undefined;
 
     query = mysql.format(query, [subredditId]);
     let posts = (await dbCon.query(query))[0];
@@ -92,4 +120,4 @@ const getPostsByNew = async function(subredditId) {
     return posts;
 }
 
-module.exports = {subredditExists, createSubreddit, createSubredditView, loadSubreddit, getPostsByNew};
+module.exports = {subredditExists, createSubreddit, createSubredditView, loadSubreddit, getPosts};

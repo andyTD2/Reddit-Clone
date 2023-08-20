@@ -29,7 +29,7 @@ router.use("/r/:subreddit", async function(req, res, next){
 })
 
 
-router.get("/r/:subreddit", subreddit.createSubredditView);
+router.get("/r/:subreddit/:filter?", subreddit.createSubredditView);
 
 
 router.post("/createSubreddit", subreddit.createSubreddit);
