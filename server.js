@@ -61,7 +61,7 @@ app.get('/', function(req, res) {
 });
 
 const accountControlRoutes = require('./routes/accountControls/accountControlRoutes');
-const subredditControlRoutes = require('./routes/subreddits/subbredditControls');
+const subredditControlRoutes = require('./routes/subreddits/subredditRoutes');
 app.use("/", accountControlRoutes);
 app.use("/", subredditControlRoutes);
 

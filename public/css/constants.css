@@ -1,9 +1,12 @@
 :root {
+    --link-font-color: rgb(104, 180, 218);
     --main-font-color: rgb(224, 224, 224);
     --main-bg-color: rgb(36, 36, 36);
     --alt-bg-color: rgb(52, 52, 52);
     --alt-bg-color-two: rgb(70, 70, 70);
+    --alt-bg-color-light: rgb(189, 189, 189);
     --font-size-small: .6rem;
     --font-size-mid: .75rem;
     --font-size-large: 1.3rem;
+
 }

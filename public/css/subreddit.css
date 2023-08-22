@@ -48,3 +48,12 @@
 .voteCount{
     align-self: center;
 }
+
+.pageNum {
+    height: 30px;
+    text-align: center;
+    background-color: var(--alt-bg-color-two);
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+}

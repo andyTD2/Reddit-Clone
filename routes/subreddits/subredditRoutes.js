@@ -5,7 +5,7 @@ const router = express.Router();
 const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
-const subreddit = require(baseDir + "/utils/subreddit");
+const subreddit = require(baseDir + "/controllers/subredditController");
 const posts = require(baseDir + "/routes/subreddits/postRoutes");
 
 /*
@@ -14,19 +14,7 @@ const posts = require(baseDir + "/routes/subreddits/postRoutes");
 */
 
 
-router.use("/r/:subreddit", async function(req, res, next){
-    console.log("SU");
-    const result = await subreddit.subredditExists(req.params.subreddit);
-    if(result)
-    {
-        req.subredditObj = subreddit.loadSubreddit(result);
-        next();
-    }
-    else
-    {
-        res.status(404).send("Page not found");
-    }
-})
+router.use("/r/:subreddit", subreddit.getSubreddit);
 
 
 router.get("/r/:subreddit/:filter?", subreddit.createSubredditView);

@@ -21,7 +21,6 @@ body {
     width: 300px;
     background-color: rgb(22, 22, 22);
     height: 300px;
-    margin-left: 10px;
 }
 
 .header {
@@ -34,13 +33,36 @@ body {
 
 .headerControls{
     display: flex;
-    justify-content: space-between;
     flex: 1;
 }
 
-.headerControls a{
+.subName{
     align-self: flex-end;
     padding-left: 30px;
+    margin-right: 10px;
+    text-decoration: none;
+    color: var(--link-font-color)
+}
+
+.subName:hover {
+    text-decoration: underline;
+}
+
+.filters {
+    align-self: flex-end;
+    flex: 1;
+    padding-left: 5px;
+}
+
+.filters a {
+    background-color: var(--main-bg-color);
+    text-decoration: none;
+    color: var(--link-font-color);
+    padding-left: 3px;
+    padding-right: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--alt-bg-color-light);
 }
 
 .feed {
@@ -50,7 +72,7 @@ body {
 }
 
 .topbar {
-    background-color: rgb(189, 189, 189);
+    background-color: var(--alt-bg-color-light);
     color: rgb(16, 16, 16);
     height: min-content;
     opacity: 0.95;
@@ -60,10 +82,12 @@ body {
     background-color: rgb(46, 46, 46);
     padding: 3px 3px;
     height:min-content;
+    align-self: flex-end;
+    margin-left: auto;
 }
 
 .accountControls a {
-    color:rgb(104, 180, 218);
+    color: var(--link-font-color);
     text-decoration: none;
     padding-left: 5px;
     padding-right: 5px;

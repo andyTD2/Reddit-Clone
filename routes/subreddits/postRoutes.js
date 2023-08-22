@@ -1,7 +1,8 @@
 "use strict";
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const post = require(baseDir + "/utils/post");
+const postController = require(baseDir + "/controllers/postController");
+const commentController = require(baseDir + "/controllers/commentController")
 
 router.get("/newPost", async function(req, res) {
     console.log("x");
@@ -9,16 +10,15 @@ router.get("/newPost", async function(req, res) {
 });
 
 
-router.get("/:postId", post.loadPost);
+router.get("/:postId", postController.loadPost);
 
-router.post("/newPost", post.createPost);
+router.post("/newPost", postController.createPost);
 
-router.post("/:postId/newComment", post.createComment);
+router.post("/:postId/vote", postController.voteOnPost);
 
-router.post("/:postId/vote", post.voteOnPost);
+router.post("/:postId/newComment", commentController.createComment);
 
-router.post("/comment/:commentId/vote", post.voteOnComment);
-
+router.post("/comment/:commentId/vote", commentController.voteOnComment);
 
 
 module.exports = router;

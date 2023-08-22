@@ -14,7 +14,12 @@
 			<div class="header">
 				<div class="topbar"> topbar </div>
 				<div class="headerControls">
-					<a href="/r/<%= subreddit.name %>"><%= subreddit.name %></a>
+					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
+					<div class="filters">
+						<a href="/r/<%= subreddit.name %>/hot">hot</a>
+						<a href="/r/<%= subreddit.name %>/top">top</a>
+						<a href="/r/<%= subreddit.name %>/new">new</a>
+					</div>
 					<%- include('partials/accountControls') %>
 				</div>
 			</div>
@@ -25,15 +30,6 @@
 					<a href="/r/<%= subreddit.name %>/post/newPost"> Create Post</a>
 				</div>
 				<div class="posts">
-					<% timeSinceCreation = function(timeInMinutes) { %>
-						<% console.log(timeInMinutes); %>
-						<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
-						<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
-						<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
-						<% if (timeInMinutes < 43200) return `${Math.floor(timeInMinutes / 1440)} days ago`; %>
-						<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
-						<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
-					<% } %>
 					<% posts.forEach((post) => { %>
 						<div class="post" data-postId="<%= post.id %>">
 							<div class="vote">
@@ -55,11 +51,12 @@
 							</div>
 							<div class="postRight">
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
-								<div class="postInfo">submitted <%- timeSinceCreation(post.minutes_ago); %> by <%= post.userName %></div>
+								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>
 						</div>
 					<% }) %>
+					<div class="pageNum" onscroll="alert(123)">Page 1</div>
 				</div>
 			</div>
 			
@@ -71,6 +68,12 @@
 		crossorigin="anonymous">
 	</script>
 	<script>
+		$(window).scroll(function() {
+		if($(window).scrollTop() + $(window).height() >= $(document).height()) {
+			alert("bottom!");
+		}
+		});
+
 		function sendPostVote(event, postId, voteDirection)
 		{
 			$.post(

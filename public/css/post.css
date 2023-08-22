@@ -56,8 +56,13 @@
     height: 15px;
 }
 
+.subName {
+    flex: 1;
+}
 
-
+.sidebar {
+    margin-left: 10px;
+}
 
 .comment{
     display: flex;
