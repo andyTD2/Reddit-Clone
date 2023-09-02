@@ -14,19 +14,19 @@
 			<div class="header">
 				<div class="topbar"> topbar </div>
 				<div class="headerControls">
-					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
+					<a href="/all" class="subName">FRONTPAGE</a>
 					<div class="filters">
 						<% if (filter == "hot") { %>
-							<a href="/r/<%= subreddit.name %>/hot" id="currentFilter">hot</a>
-						<% } else { %> <a href="/r/<%= subreddit.name %>/hot">hot</a> <% } %>
+							<a href="/hot" id="currentFilter">hot</a>
+						<% } else { %> <a href="/hot">hot</a> <% } %>
 
 						<% if (filter == "top") { %>
-							<a href="/r/<%= subreddit.name %>/top" id="currentFilter">top</a>
-						<% } else { %> <a href="/r/<%= subreddit.name %>/top">top</a> <% } %>
+							<a href="/top" id="currentFilter">top</a>
+						<% } else { %> <a href="/top">top</a> <% } %>
 
 						<% if (filter == "new") { %>
-							<a href="/r/<%= subreddit.name %>/new" id="currentFilter">new</a>
-						<% } else { %> <a href="/r/<%= subreddit.name %>/new">new</a> <% } %>
+							<a href="/new" id="currentFilter">new</a>
+						<% } else { %> <a href="/new">new</a> <% } %>
 					</div>
 					<%- include('partials/accountControls') %>
 				</div>
@@ -35,7 +35,6 @@
 			<div class="feed">
 				<div class="sidebar">
 					<a href="/createSubreddit.html">Create Subreddit!</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost"> Create Post</a>
 				</div>
 				<div class="posts" data-filter="<%= filter %>">
 					<% posts.forEach((post) => { %>
@@ -59,13 +58,13 @@
 							</div>
 							<img src = "/images/text-icon.png" class="postPreview"></img>
 							<div class="postRight">
-								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
-								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
-								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
+								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %> to <%= post.subredditName %></div>
+								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>
 						</div>
 					<% }) %>
-					<div class="pageNum" data-pageNum="<%= subreddit.pageNum %>"><p>LOAD MORE</p></div>
+					<div class="pageNum" data-pageNum="<%= pageNum %>"><p>LOAD MORE</p></div>
 				</div>
 			</div>
 			
@@ -129,7 +128,7 @@
 		$(".posts").on("click.loadmore", ".pageNum", function() {
 			let pageNum = $(".pageNum").attr("data-pageNum");
 			let filter = $(".posts").attr("data-filter");
-			$.get(`/r/<%= subreddit.name %>/page=${pageNum}/${filter}`,
+			$.get(`/r/page=${pageNum}/${filter}`,
 			function(data, status)
 			{
 				$(".pageNum").remove();

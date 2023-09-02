@@ -59,9 +59,10 @@
 
 							</div>
 						</div>
+						<img src = "/images/text-icon.png" class="postPreview"></img>
 						<div class="postRight">
 							<div class="postTitle"><%= post.title %></div>
-							<div class="postTop">submitted <%- timeSinceCreation(post.minutes_ago) %> by <%= post.userName %></div>
+							<div class="postTop">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
 							<div class="postBody"><%= post.content %></div>
 						</div>
 					</div>
@@ -72,8 +73,17 @@
 							<input type="submit" value="Submit">
 						</form>
 					</div>
-					<div class="comments">
+					<div class="comments" data-filter="<%= filter %>">
 						<div class="numComments"><%= post.numComments %> comments</div>
+						<div class="filters">	
+							<% if (filter == "top") { %>
+								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/top" id="currentFilter">top</a>
+							<% } else { %> <a href="/r/<%= subreddit.name %>/post/<%= post.id %>/top">top</a> <% } %>
+	
+							<% if (filter == "new") { %>
+								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/new" id="currentFilter">new</a>
+							<% } else { %> <a href="/r/<%= subreddit.name %>/post/<%= post.id %>/new">new</a> <% } %>
+						</div>
 						<% function displayComment(comment, evens) { %>
 							<% if (evens) { %>
 								<div class="commentBox even" data-commentId="<%= comment.id %>">
@@ -98,7 +108,6 @@
 												<img src="/images/down-arrow.png" class="downvote">
 											<% } %>
 										</div>
-
 										<div class="commentContent">
 											<div class="commentTop">comment by <%= comment.userName %> <%- timeSinceCreation(comment.minutes_ago) %></div>
 											<div class="commentBody"><%= comment.content %></div>
@@ -118,6 +127,7 @@
 						<% comments.forEach((comment) => { %>
 							<% displayComment(comment, true); %>
 						<% }) %>
+						<div class="pageNum" data-pageNum="<%= post.pageNum %>">LOAD MORE</div>
 					</div>
 				</div>
 			</div>
@@ -155,9 +165,24 @@
 			);
 		}
 
+		$(".comments").on("click.loadmore", ".pageNum", function() {
+			let pageNum = $(".pageNum").attr("data-pageNum");
+			let postId = $("#postVote").attr("data-postId");
+			let filter = $(".comments").attr("data-filter");
+			$.get(`/r/<%= subreddit.name %>/post/${postId}/page=${pageNum}/${filter}`,
+			function(data, status)
+			{
+				$(".pageNum").remove();
+				const insert = document.getElementsByClassName("comments")[0];
+				insert.insertAdjacentHTML('beforeend', data);
+				console.log(data);
+			});
+		})
 
-		function sendCommentVote(event, commentId, voteDirection)
+
+		function sendCommentVote(thisObj, voteDirection)
 		{
+			let commentId = thisObj.parent().parent().parent().attr("data-commentId");
 			$.post(
 				`/r/<%= subreddit.name %>/post/comment/${commentId}/vote`,
 				{
@@ -165,100 +190,92 @@
 					direction: voteDirection
 				},
 				function(data, status){
-					let parentOfThisDiv = event.target.parentElement;
-					let voteCount = parentOfThisDiv.getElementsByClassName("voteCount")[0];
+					let parentOfThisDiv = thisObj.parent();
+					let voteCount = parentOfThisDiv.find(".voteCount");
 
 					if(voteDirection === 1)
 					{
-						parentOfThisDiv.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
-						if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
+						parentOfThisDiv.find(".downvote").attr("src", "/images/down-arrow.png");
+						if(thisObj.attr("src") == "/images/up-arrow-green.png")
 						{
-							event.target.setAttribute("src", "/images/up-arrow.png");
+							thisObj.attr("src", "/images/up-arrow.png");
 						}
 						else
 						{
-							event.target.setAttribute("src", "/images/up-arrow-green.png");
+							thisObj.attr("src", "/images/up-arrow-green.png");
 						}
 					}
 					else
 					{
-						parentOfThisDiv.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
-						if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
+						parentOfThisDiv.find(".upvote").attr("src", "/images/up-arrow.png");
+						if(thisObj.attr("src") == "/images/down-arrow-magenta.png")
 						{
-							event.target.setAttribute("src", "/images/down-arrow.png");
+							thisObj.attr("src", "/images/down-arrow.png");
 						}
 						else
-							event.target.setAttribute("src", "/images/down-arrow-magenta.png");
+							thisObj.attr("src", "/images/down-arrow-magenta.png");
 					}
-					voteCount.textContent = parseInt(voteCount.textContent) + parseInt(data);
+					voteCount.text(parseInt(voteCount.text()) + parseInt(data));
 				}
 			);
 		}
 
-		let comments = document.getElementsByClassName("commentBox");
-		for (let comment of comments)
+
+
+		$(".comments").on("click", ".upvote", function() {
+			sendCommentVote($(this), 1);
+		})
+
+		$(".comments").on("click", ".downvote", function() {
+			sendCommentVote($(this), -1);
+		})
+
+
+
+		$("#postVote .upvote").on("click", function() {
+			sendPostVote($(this), 1);
+		})
+		$("#postVote .downvote").on("click", function() {
+			sendPostVote($(this), -1);
+		})
+
+
+		function sendPostVote(thisObj, voteDirection)
 		{
-			comment.getElementsByClassName("upvote")[0].addEventListener("click", 
-			(event) => {
-				sendCommentVote(event, comment.getAttribute("data-commentId"), 1)
-			});
-
-			comment.getElementsByClassName("downvote")[0].addEventListener("click", 
-			(event) => {
-				sendCommentVote(event, comment.getAttribute("data-commentId"), -1)
-			});
-		}
-
-
-		let postVote = document.getElementById("postVote");
-		postVote.getElementsByClassName("upvote")[0].addEventListener("click", 
-		(event) => {
-			sendPostVote(event, postVote.getAttribute("data-postId"), 1)
-		});
-
-		postVote.getElementsByClassName("downvote")[0].addEventListener("click", 
-		(event) => {
-			sendPostVote(event, postVote.getAttribute("data-postId"), -1)
-		});
-
-
-		function sendPostVote(event, postId, voteDirection)
-		{
+			let postId = $("#postVote").attr("data-postId");
 			$.post(
-					`/r/<%= subreddit.name %>/post/${postId}/vote`,
+					`/vote/${postId}`,
 					{
 						//1 for upvote -1 for downvote
 						direction: voteDirection
 					},
 					function(data, status){
-						let parentOfThisDiv = event.target.parentElement;
-						let voteCount = parentOfThisDiv.getElementsByClassName("voteCount")[0];
+						let parentOfThisDiv = thisObj.parent();
+						let voteCount = parentOfThisDiv.find(".voteCount");
 
 						if(voteDirection === 1)
 						{
-							parentOfThisDiv.getElementsByClassName("downvote")[0].setAttribute("src", "/images/down-arrow.png");
-							if(event.target.getAttribute("src") == "/images/up-arrow-green.png")
+							parentOfThisDiv.find(".downvote").attr("src", "/images/down-arrow.png");
+							if(thisObj.attr("src") == "/images/up-arrow-green.png")
 							{
-								event.target.setAttribute("src", "/images/up-arrow.png");
+								thisObj.attr("src", "/images/up-arrow.png");
 							}
 							else
 							{
-								event.target.setAttribute("src", "/images/up-arrow-green.png");
+								thisObj.attr("src", "/images/up-arrow-green.png");
 							}
 						}
 						else
 						{
-							parentOfThisDiv.getElementsByClassName("upvote")[0].setAttribute("src", "/images/up-arrow.png");
-							if(event.target.getAttribute("src") == "/images/down-arrow-magenta.png")
+							parentOfThisDiv.find(".upvote").attr("src", "/images/up-arrow.png");
+							if(thisObj.attr("src") == "/images/down-arrow-magenta.png")
 							{
-								event.target.setAttribute("src", "/images/down-arrow.png");
+								thisObj.attr("src", "/images/down-arrow.png");
 							}
 							else
-							{
-								event.target.setAttribute("src", "/images/down-arrow-magenta.png");
-							}
+							thisObj.attr("src", "/images/down-arrow-magenta.png");
 						}
-						voteCount.textContent = parseInt(voteCount.textContent) + parseInt(data);
+						voteCount.text(parseInt(voteCount.text()) + parseInt(data));
 					}
 				);
 		}

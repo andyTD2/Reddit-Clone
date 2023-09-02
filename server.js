@@ -1,8 +1,10 @@
 global.baseDir = __dirname;
+const config = require(baseDir + '/config/config.json');
+global.baseURL = config.baseURL;
 
 const http = require("http");
-const hostname = "127.0.0.1";
-const port = 3000;
+const hostname = config.hostname;
+const port = config.port;
 const express = require("express");
 const app = express();
 const session = require("express-session");
@@ -12,15 +14,15 @@ const runService = require(baseDir + "/utils/runService").runService;
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
-const config = require(baseDir + '/config/credentials.json');
+const credentials = require(baseDir + '/config/credentials.json');
 const bodyParser = require("body-parser");
 
 const options = {
     host: '127.0.0.1',
     port: 3306,
-    user: config.user,
-    password: config.password,
-    database: config.db_name
+    user: credentials.user,
+    password: credentials.password,
+    database: credentials.db_name
 }
 const sessionStore = new sqlStore(options);
 
@@ -34,8 +36,8 @@ sessionStore.onReady().then(() => {
 });
 
 app.use(session({
-    key: config.key,
-    secret: config.secret,
+    key: credentials.key,
+    secret: credentials.secret,
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
@@ -48,17 +50,6 @@ app.use(session({
 
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
-
-app.get('/', function(req, res) {
-    params = {subreddit: {name: ""}};
-
-    if(req.session.loggedIn)
-    {
-        params.username = req.session.user;
-    }
-
-    res.render("index", params);
-});
 
 const accountControlRoutes = require('./routes/accountControls/accountControlRoutes');
 const subredditControlRoutes = require('./routes/subreddits/subredditRoutes');

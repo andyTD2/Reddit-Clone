@@ -51,9 +51,38 @@
 
 .pageNum {
     height: 30px;
-    text-align: center;
     background-color: var(--alt-bg-color-two);
     margin-left: 10px;
     margin-right: 10px;
     border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.filters {
+    align-self: flex-end;
+    flex: 1;
+    padding-left: 5px;
+}
+
+.filters a {
+    background-color: var(--main-bg-color);
+    text-decoration: none;
+    color: var(--link-font-color);
+    padding-left: 3px;
+    padding-right: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--alt-bg-color-light);
+}
+
+#currentFilter {
+    color: rgb(199, 48, 17);
+    padding: 4px;
+}
+
+.postPreview {
+    justify-self: center;
+    align-self: center;
 }

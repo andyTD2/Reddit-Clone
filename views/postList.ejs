@@ -1,0 +1,29 @@
+<% posts.forEach((post) => { %>
+    <div class="post" data-postId="<%= post.id %>">
+        <div class="vote">
+            <% if (post.voteDirection == 1) { %>
+                <img src="/images/up-arrow-green.png" class="upvote">
+            <%  } else {  %>
+                <img src="/images/up-arrow.png" class="upvote">
+            <% } %>
+
+            <div class="voteCount">
+                <%= post.numVotes %>
+            </div>
+
+            <% if (post.voteDirection == -1) { %>
+                <img src="/images/down-arrow-magenta.png" class="downvote">
+            <% } else { %>
+                <img src="/images/down-arrow.png" class="downvote">
+            <% } %>
+        </div>
+        <div class="postRight">
+            <a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+            <div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
+            <a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
+        </div>
+    </div>
+<% }) %>
+<% if (posts.length > 0) {%>
+<div class="pageNum" data-pageNum="<%= subreddit.pageNum %>">LOAD MORE</div>
+<% } %>

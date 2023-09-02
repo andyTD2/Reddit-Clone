@@ -9,16 +9,17 @@ router.get("/newPost", async function(req, res) {
     res.render("createPost", {createPostLink: `/r/${req.params.subreddit}/post/newPost`})
 });
 
+router.use("/:postId/", postController.getPost);
 
-router.get("/:postId", postController.loadPost);
+router.get("/:postId/:filter?", postController.createPostView);
 
 router.post("/newPost", postController.createPost);
-
-router.post("/:postId/vote", postController.voteOnPost);
 
 router.post("/:postId/newComment", commentController.createComment);
 
 router.post("/comment/:commentId/vote", commentController.voteOnComment);
+
+router.get("/:postId/page=:pageNum/:filter?", commentController.loadMoreComments);
 
 
 module.exports = router;

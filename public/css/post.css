@@ -100,6 +100,7 @@
 .numComments{
     font-size: var(--font-size-small);
     padding-left: 30px;
+    margin-bottom: 5px;
 }
 
 .replyBox {
@@ -153,4 +154,40 @@
 
 .postBody {
     padding-top: 10px;
+}
+
+.pageNum {
+    display: flex;
+    height: 30px;
+    background-color: var(--alt-bg-color-two);
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.filters {
+    align-self: flex-end;
+    flex: 1;
+    padding-left: 30px;
+}
+
+.filters a {
+    background-color: var(--main-bg-color);
+    text-decoration: none;
+    color: var(--link-font-color);
+    padding-left: 3px;
+    padding-right: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--alt-bg-color-light);
+}
+
+#currentFilter {
+    color: rgb(199, 48, 17);
+    padding-top: 4px;
+    padding-left: 4px;
+    padding-right: 4px;
 }

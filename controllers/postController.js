@@ -6,28 +6,39 @@ const mysql = db.mysql;
 const queryDb = db.queryDb;
 
 const {updateRank, calculateRank} = require(baseDir + "/utils/updateRanking");
-const {getPostData, getPostVoteDirection} = require(baseDir + "/utils/post");
+const {getPostData, getPostVoteDirection, Post} = require(baseDir + "/utils/post");
 const {getCommentData} = require(baseDir + "/utils/comment");
 
-const loadPost = async function (req, res)
+const getPost = async function(req, res, next)
 {
-    let postData = await getPostData(req.session.userID, req.params.postId);
-
+    const postData = await getPostData(req.session.userId, req.params.postId);
     if(!postData)
     {
         res.status(404).send("Page not found.");
         return;
     }
+    
+    req.postObj = new Post(req.params.postId, postData.title, postData.content, postData.numVotes, 
+        postData.userId, postData.userName, postData.minutes_ago, await getPostVoteDirection(req.session.userID, req.params.postId));
+    // /        constructor(id, title, content, numVotes, userId, userName, pageNum)
+    next();
+}
 
-    let commentData = await getCommentData(req.params.postId, req.session.userID);
+const createPostView = async function (req, res)
+{
+    let commentData = await getCommentData(req);
+    if(!commentData){
+        throw new error("Something happened(Invalid comment data...)")
+        return;
+    }
 
     let params = {
         subreddit: req.subredditObj,
-        post: postData,
+        post: req.postObj,
         comments: commentData,
-        username: req.session.loggedIn ? req.session.user : undefined
+        username: req.session.loggedIn ? req.session.user : undefined,
+        filter: req.params.filter ? req.params.filter : "top"
     }
-    console.log(postData);
     res.render(baseDir + "/views/post", params);
 }
 
@@ -83,5 +94,4 @@ const voteOnPost = async function(req, res) {
 }
 
 
-
-module.exports = {loadPost, createPost, voteOnPost};
+module.exports = {createPostView, createPost, voteOnPost, getPost};

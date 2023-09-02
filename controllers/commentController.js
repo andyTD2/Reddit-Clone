@@ -55,4 +55,13 @@ const createComment = async function(req, res) {
     }
 };
 
-module.exports = {createComment, voteOnComment};
+const loadMoreComments = async function(req, res) {
+    const comments = await getCommentData(req);
+    if(!comments){
+        res.status(404).send("Page Not Found")
+    }
+
+    res.render(baseDir + "/views/commentList", {comments: comments, pageNum: req.params.pageNum + 1});
+}
+
+module.exports = {createComment, voteOnComment, loadMoreComments};

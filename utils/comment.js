@@ -4,7 +4,20 @@ const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
+const MAX_COMMENTS_PER_PAGE = 5;
 
+const commentFilters = {
+    new: `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
+    LEFT JOIN users ON comments.user_id = users.id
+    WHERE post_id = ? AND parent_id IS null
+    ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+
+    top: `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
+    LEFT JOIN users ON comments.user_id = users.id
+    WHERE post_id = ? AND parent_id IS null
+    ORDER BY numVotes DESC LIMIT ? OFFSET ?`
+
+};
 
 const getCommentVoteDirection = async function(userId, commentId)
 {
@@ -35,17 +48,21 @@ const getChildrenOfComment = async function(commentList, postId, userId) {
     return;
 }
 
-const getCommentData = async function(postId, userId)
+const getCommentData = async function(req)
 {
-    let result = await queryDb(
-                                `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
-                                LEFT JOIN users ON comments.user_id = users.id
-                                WHERE post_id = ? AND parent_id IS null
-                                ORDER BY created_at DESC LIMIT 50`,
-                                [postId]
-    );
+    if(!req.params.pageNum) req.params.pageNum = 1;
+    else req.params.pageNum = parseInt(req.params.pageNum);
+    if(!req.params.filter) req.params.filter = "top";
 
-    await getChildrenOfComment(result, postId, userId);
+    let query = commentFilters[req.params.filter];
+    if(!query)
+    {
+        return undefined;
+    }
+
+    let result = await queryDb(query, [req.params.postId, MAX_COMMENTS_PER_PAGE, (req.params.pageNum-1) * MAX_COMMENTS_PER_PAGE]);
+
+    await getChildrenOfComment(result, req.params.postId, req.session.userID);
     return result;
 }
 

@@ -1,4 +1,7 @@
 "use strict";
+
+const { getAllPosts } = require("../utils/subreddit");
+
 require("express-async-errors")
 const errors = require(baseDir + "/utils/error")
 
@@ -7,20 +10,49 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const {getPosts, subredditExists, loadSubreddit} = require(baseDir + "/utils/subreddit");
-const {parseTimeSinceCreation} = require(baseDir + "/utils/misc");
+const {getPosts, getSubredditData, loadSubreddit, getPostVoteDirection} = require(baseDir + "/utils/subreddit");
+const {getNumComments} = require(baseDir + "/utils/post");
+const Subreddit = require(baseDir + "/utils/subreddit").Subreddit;
+
+
+///////////////////////////////////
+///////// MIDDLEWARES /////////////
+///////////////////////////////////
 
 const getSubreddit = async function(req, res, next) {
-    const result = await subredditExists(req.params.subreddit);
+    const result = await getSubredditData(req.params.subreddit);
     if(result)
     {
-        req.subredditObj = loadSubreddit(result);
+        req.subredditObj = new Subreddit(result.id, result.title);
+        console.log(req.params.pageNum);
         next();
     }
     else
     {
         res.status(404).send("Page not found");
     }
+}
+
+const getPageNum = function(req, res, next) {
+    req.subredditObj.pageNum = req.params.pageNum;
+    next();
+}
+
+//////////////////////////////////////
+/////////// ROUTES ///////////////////
+//////////////////////////////////////
+
+//all is a special subreddit that has content from all subreddits
+const getAll = async function(req, res) {
+    req.params.pageNum = 1;
+    let params = {
+        posts: await getAllPosts(req),
+        filter: req.params.filter,
+        username: req.session.loggedIn ? req.session.user : undefined,
+        pageNum: 1
+    }
+
+    res.render("frontpage", params);
 }
 
 const createSubreddit = async function(req, res) {
@@ -30,7 +62,7 @@ const createSubreddit = async function(req, res) {
     }
     else
     {
-        if(await subredditExists(req.body.subredditName))
+        if(await getSubredditData(req.body.subredditName))
         {
             res.send("This subreddit name has already been taken.");
         }
@@ -46,35 +78,23 @@ const createSubreddit = async function(req, res) {
 
 
 const createSubredditView = async function(req, res) {
-    if(!req.params.filter) req.params.filter = "hot";
-
     let params = {
-        subreddit: req.subredditObj
-    }
-    params.posts = await getPosts(req.subredditObj.id, req.params.filter);
-    if(!params.posts)
-    { 
-        res.status(404).send("Page not found.");
-        return;
+        subreddit: req.subredditObj,
+        posts: await getPosts(req),
+        filter: req.params.filter,
+        username: req.session.loggedIn ? req.session.user : undefined
     }
 
-
-    if (req.session.loggedIn)
-    {
-        params.username = req.session.user;
-        for (let post of params.posts)
-        {
-            let voteDirection = await queryDb("SELECT direction FROM postVotes WHERE user_id = ? AND post_id = ?", [req.session.userID, post.id]);
-            if(voteDirection.length > 0)
-                post.voteDirection = voteDirection[0].direction;
-        }
-    }
-    for (let post of params.posts)
-    {
-        post.timeSinceCreation = parseTimeSinceCreation(post.minutes_ago);
-    }
     res.render("subreddit", params);
 }
 
+const getNextPage = async function(req, res) {
+    req.subredditObj.pageNum = parseInt(req.subredditObj.pageNum) + 1;
+    const posts = await getPosts(req);
 
-module.exports = {createSubreddit, createSubredditView, getSubreddit};
+    res.render(baseDir + "/views/postList.ejs", {posts: posts, subreddit: req.subredditObj});
+}
+
+
+
+module.exports = {createSubreddit, createSubredditView, getSubreddit, getNextPage, getAll, getPageNum};
