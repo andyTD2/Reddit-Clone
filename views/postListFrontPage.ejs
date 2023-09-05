@@ -19,8 +19,8 @@
         </div>
         <img src = "/images/text-icon.png" class="postPreview"></img>
         <div class="postRight">
-            <a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
-            <div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
+            <a href="/r/<%= post.title %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+            <div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %> to <%= post.subredditName %></div>
             <a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
         </div>
     </div>

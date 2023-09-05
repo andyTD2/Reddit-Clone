@@ -65,7 +65,7 @@
 							</div>
 						</div>
 					<% }) %>
-					<div class="pageNum" data-pageNum="<%= subreddit.pageNum %>"><p>LOAD MORE</p></div>
+					<div class="pageNum" data-pageNum="<%= pageNum %>"><p>LOAD MORE</p></div>
 				</div>
 			</div>
 			
@@ -129,7 +129,7 @@
 		$(".posts").on("click.loadmore", ".pageNum", function() {
 			let pageNum = $(".pageNum").attr("data-pageNum");
 			let filter = $(".posts").attr("data-filter");
-			$.get(`/r/<%= subreddit.name %>/page=${pageNum}/${filter}`,
+			$.get(`/r/<%= subreddit.name %>/next/page=${pageNum}/${filter}`,
 			function(data, status)
 			{
 				$(".pageNum").remove();

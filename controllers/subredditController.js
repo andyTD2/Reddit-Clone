@@ -1,7 +1,5 @@
 "use strict";
 
-const { getAllPosts } = require("../utils/subreddit");
-
 require("express-async-errors")
 const errors = require(baseDir + "/utils/error")
 
@@ -10,8 +8,7 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const {getPosts, getSubredditData, loadSubreddit, getPostVoteDirection} = require(baseDir + "/utils/subreddit");
-const {getNumComments} = require(baseDir + "/utils/post");
+const {getPosts, getSubredditData, getSubredditView, getNextPage} = require(baseDir + "/utils/subreddit");
 const Subreddit = require(baseDir + "/utils/subreddit").Subreddit;
 
 
@@ -20,11 +17,12 @@ const Subreddit = require(baseDir + "/utils/subreddit").Subreddit;
 ///////////////////////////////////
 
 const getSubreddit = async function(req, res, next) {
-    const result = await getSubredditData(req.params.subreddit);
+    req.subreddit = req.subreddit || req.params.subreddit;
+
+    const result = await getSubredditData(req.subreddit);
     if(result)
     {
         req.subredditObj = new Subreddit(result.id, result.title);
-        console.log(req.params.pageNum);
         next();
     }
     else
@@ -34,7 +32,8 @@ const getSubreddit = async function(req, res, next) {
 }
 
 const getPageNum = function(req, res, next) {
-    req.subredditObj.pageNum = req.params.pageNum;
+    console.log("ADWA");
+    req.pageNum = req.params.pageNum || 1;
     next();
 }
 
@@ -42,18 +41,8 @@ const getPageNum = function(req, res, next) {
 /////////// ROUTES ///////////////////
 //////////////////////////////////////
 
-//all is a special subreddit that has content from all subreddits
-const getAll = async function(req, res) {
-    req.params.pageNum = 1;
-    let params = {
-        posts: await getAllPosts(req),
-        filter: req.params.filter,
-        username: req.session.loggedIn ? req.session.user : undefined,
-        pageNum: 1
-    }
 
-    res.render("frontpage", params);
-}
+
 
 const createSubreddit = async function(req, res) {
     if(!req.session.loggedIn)
@@ -77,24 +66,23 @@ const createSubreddit = async function(req, res) {
 }
 
 
-const createSubredditView = async function(req, res) {
-    let params = {
-        subreddit: req.subredditObj,
-        posts: await getPosts(req),
-        filter: req.params.filter,
-        username: req.session.loggedIn ? req.session.user : undefined
-    }
+const renderFrontPage = async function(req, res) {
+    let params = await getSubredditView(req);
+    res.render("frontpage", params);
+}
 
+const renderSubreddit = async function(req, res) {
+    let params = await getSubredditView(req);
     res.render("subreddit", params);
 }
 
-const getNextPage = async function(req, res) {
-    req.subredditObj.pageNum = parseInt(req.subredditObj.pageNum) + 1;
-    const posts = await getPosts(req);
 
-    res.render(baseDir + "/views/postList.ejs", {posts: posts, subreddit: req.subredditObj});
+const renderNextPage = async function(req, res) {
+    let params = await getNextPage(req);
+
+    if(req.subredditObj.id == 1) res.render(baseDir + "/views/postListFrontPage.ejs", params)
+    else res.render(baseDir + "/views/postList.ejs", params);
 }
 
 
-
-module.exports = {createSubreddit, createSubredditView, getSubreddit, getNextPage, getAll, getPageNum};
+module.exports = {createSubreddit, getSubreddit, getPageNum, renderFrontPage, renderSubreddit, renderNextPage};

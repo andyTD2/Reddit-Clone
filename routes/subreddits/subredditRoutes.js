@@ -14,21 +14,47 @@ const postController = require(baseDir + "/controllers/postController");
     If not, send 404, otherwise continue
 */
 
-router.get("/", subreddit.getAll);
 
 router.post("/createSubreddit", subreddit.createSubreddit);
 
-router.use("/r/:subreddit/", subreddit.getSubreddit);
 
-router.use("/r/:subreddit/page=:pageNum", subreddit.getPageNum);
+router.use("/r/:subreddit/:filter?", subreddit.getSubreddit);
+router.use("/r/:subreddit/:filter?", subreddit.getPageNum);
+router.get("/r/:subreddit/:filter?", subreddit.renderSubreddit);
 
-router.get("/r/:subreddit/page=:pageNum/:filter?", subreddit.getNextPage);
 
-router.get("/r/:subreddit/:filter?", subreddit.createSubredditView);
+router.use("/r/:subreddit/page=:pageNum/:filter?", subreddit.getSubreddit);
+router.use("/r/:subreddit/page=:pageNum/:filter?", subreddit.getPageNum);
+router.get("/r/:subreddit/page=:pageNum/:filter?", subreddit.renderSubreddit);
 
+
+router.use("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.getSubreddit);
+router.use("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.getPageNum);
+router.get("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.renderNextPage);
+
+
+router.use("/r/:subreddit/post/", subreddit.getSubreddit);
 router.use("/r/:subreddit/post/", posts);
 
+
 router.post("/vote/:postId", postController.voteOnPost);
+
+
+router.use("/page=:pageNum/:filter?", (req, res, next) => {
+    req.subreddit = "ALL";
+    subreddit.getSubreddit(req, res, next);
+});
+router.use("/page=:pageNum/:filter?", subreddit.getPageNum);
+router.get("/page=:pageNum/:filter?", subreddit.renderFrontPage);
+
+
+router.use("/:filter?", (req, res, next) => {
+    req.subreddit = "ALL";
+    subreddit.getSubreddit(req, res, next);
+});
+router.use("/:filter?", subreddit.getPageNum);
+router.get("/:filter?", subreddit.renderFrontPage);
+
 
 
 

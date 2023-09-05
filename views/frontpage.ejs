@@ -128,7 +128,7 @@
 		$(".posts").on("click.loadmore", ".pageNum", function() {
 			let pageNum = $(".pageNum").attr("data-pageNum");
 			let filter = $(".posts").attr("data-filter");
-			$.get(`/r/page=${pageNum}/${filter}`,
+			$.get(`/r/<%= subreddit.name %>/next/page=${pageNum}/${filter}`,
 			function(data, status)
 			{
 				$(".pageNum").remove();
