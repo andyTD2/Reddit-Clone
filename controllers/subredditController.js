@@ -32,7 +32,6 @@ const getSubreddit = async function(req, res, next) {
 }
 
 const getPageNum = function(req, res, next) {
-    console.log("ADWA");
     req.pageNum = req.params.pageNum || 1;
     next();
 }

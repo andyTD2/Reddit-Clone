@@ -6,6 +6,7 @@ div {
 
 body {
     margin: 0px;
+    overflow-x: hidden;
 }
 
 .container {
@@ -21,6 +22,13 @@ body {
     width: 300px;
     background-color: rgb(22, 22, 22);
     height: 300px;
+}
+
+.sidebar a {
+    color: var(--link-font-color);
+}
+.sidebar a:hover {
+    cursor: pointer
 }
 
 .header {
@@ -76,7 +84,104 @@ body {
     padding-right: 5px;
 }
 
+.accountControls a:hover {
+    cursor: pointer;
+}
+
 .postPreview {
     width: 50px;
     height: 50px;
 }
+
+.loginModal {
+    color: black;
+  background-color: rgb(224, 224, 224);
+    width: 300px;
+    height: 300px;
+    position: fixed;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    transition: transform .5s;
+  }
+
+  .loginModalOpened {
+    transform: translate(-50%, 50%);
+    visibility: visible;
+  }
+  
+  .loginModal div {
+      color: black;
+  }
+  
+  .closeLoginModal {
+      text-align: right;
+      margin-right: 10px;
+      margin-top: 10px;
+  }
+  
+  .loginText {
+      text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+  
+  .loginForm
+  {
+    display: flex;
+    flex-direction: column
+  }
+  
+  .loginForm label {
+    text-align: center
+  }
+  
+  .inputBox {
+    height: 25px;
+    width: 75%;
+    align-self: center;
+    border-radius: 7px;
+    border-style:none;
+  }
+  
+  .inputBox::placeholder {
+    color: grey;
+  }
+  
+  
+  .submitBtn {
+    margin-top: 30px;
+    width: 100px;
+    height: 30px;
+    align-self: center;
+    background-color: white;
+    border-style:none;
+    border-radius: 5px;
+  }
+  
+  .submitBtn:hover {
+    cursor:pointer;
+  }
+  
+  .submitBtn:active {
+    margin-top: 32px;
+    font-weight: bold;
+  } 
+
+  #loginErrorAuthentication {
+    color: red;
+    text-align: center;
+    display: none;
+  }
+
+  #loginErrorGeneric {
+    color: red;
+    text-align: center;
+    display: none;
+  }
+  

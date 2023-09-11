@@ -90,7 +90,7 @@ const getSubredditView = async function(req) {
     let params = {
         subreddit: req.subredditObj,
         pageNum: req.pageNum,
-        posts: await getPosts({filter: req.params.filter, pageNum: req.pageNum, id: req.subredditObj.id, userID: req.params.userID}),
+        posts: await getPosts({filter: req.params.filter, pageNum: req.pageNum, id: req.subredditObj.id, userID: req.session.userID}),
         filter: req.params.filter,
         username: req.session.loggedIn ? req.session.user : undefined
     }
@@ -100,7 +100,7 @@ const getSubredditView = async function(req) {
 
 const getNextPage = async function(req) {
     req.pageNum = parseInt(req.pageNum) + 1;
-    const posts = await getPosts({filter: req.params.filter, pageNum: req.pageNum, id: req.subredditObj.id, userID: req.params.userID})
+    const posts = await getPosts({filter: req.params.filter, pageNum: req.pageNum, id: req.subredditObj.id, userID: req.session.userID})
 
     let params = {
         posts: posts,

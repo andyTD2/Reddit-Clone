@@ -9,6 +9,9 @@
 	<link rel="stylesheet" href="/css/subreddit.css">
     </head>
     <body>
+
+		<%- include('partials/loginModal') %>
+
 		<div class="container">
 		
 			<div class="header">
@@ -34,17 +37,17 @@
 			
 			<div class="feed">
 				<div class="sidebar">
-					<a href="/createSubreddit.html">Create Subreddit!</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost"> Create Post</a>
+					<a href="/createSubreddit.html" class="openLoginModal">Create Subreddit!</a>
+					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal"> Create Post</a>
 				</div>
 				<div class="posts" data-filter="<%= filter %>">
 					<% posts.forEach((post) => { %>
 						<div class="post" data-postId="<%= post.id %>">
 							<div class="vote">
 								<% if (post.voteDirection == 1) { %>
-									<img src="/images/up-arrow-green.png" class="upvote">
+									<img src="/images/up-arrow-green.png" class="upvote openLoginModal">
 								<%  } else {  %>
-									<img src="/images/up-arrow.png" class="upvote">
+									<img src="/images/up-arrow.png" class="upvote openLoginModal">
 								<% } %>
 
 								<div class="voteCount">
@@ -52,9 +55,9 @@
 								</div>
 
 								<% if (post.voteDirection == -1) { %>
-									<img src="/images/down-arrow-magenta.png" class="downvote">
+									<img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
 								<% } else { %>
-									<img src="/images/down-arrow.png" class="downvote">
+									<img src="/images/down-arrow.png" class="downvote openLoginModal">
 								<% } %>
 							</div>
 							<img src = "/images/text-icon.png" class="postPreview"></img>
@@ -76,56 +79,12 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
+	<% if (locals.username) { %>
+		<script type = "text/javascript" src="/scripts/postVote.js"></script>
+	<% } else { %>
+		<script type="text/javascript" src="/scripts/loginModal.js"></script>
+	<% } %>
 	<script>
-		function sendPostVote(thisObj, voteDirection)
-		{
-			let postId = thisObj.parent().parent().attr("data-postId");
-			$.post(
-					`/vote/${postId}`,
-					{
-						//1 for upvote -1 for downvote
-						direction: voteDirection
-					},
-					function(data, status){
-
-
-						let parentOfThisDiv = thisObj.parent();
-						let voteCount = parentOfThisDiv.find(".voteCount");
-
-						if(voteDirection === 1)
-						{
-							parentOfThisDiv.find(".downvote").attr("src", "/images/down-arrow.png");
-							if(thisObj.attr("src") == "/images/up-arrow-green.png")
-							{
-								thisObj.attr("src", "/images/up-arrow.png");
-							}
-							else
-							{
-								thisObj.attr("src", "/images/up-arrow-green.png");
-							}
-						}
-						else
-						{
-							parentOfThisDiv.find(".upvote").attr("src", "/images/up-arrow.png");
-							if(thisObj.attr("src") == "/images/down-arrow-magenta.png")
-							{
-								thisObj.attr("src", "/images/down-arrow.png");
-							}
-							else
-							thisObj.attr("src", "/images/down-arrow-magenta.png");
-						}
-						voteCount.text(parseInt(voteCount.text()) + parseInt(data));
-					}
-				);
-		}
-
-		$(".posts").on("click", ".upvote", function() {
-				sendPostVote($(this), 1)			
-		})
-		$(".posts").on("click", ".downvote", function() {
-				sendPostVote($(this), -1)			
-		})
-
 		$(".posts").on("click.loadmore", ".pageNum", function() {
 			let pageNum = $(".pageNum").attr("data-pageNum");
 			let filter = $(".posts").attr("data-filter");

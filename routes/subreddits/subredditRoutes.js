@@ -8,6 +8,7 @@ const mysql = db.mysql;
 const subreddit = require(baseDir + "/controllers/subredditController");
 const posts = require(baseDir + "/routes/subreddits/postRoutes");
 const postController = require(baseDir + "/controllers/postController");
+const commentController = require(baseDir + "/controllers/commentController");
 
 /*
     This middleware checks if the subreddit the user is trying to access exists.
@@ -38,6 +39,8 @@ router.use("/r/:subreddit/post/", posts);
 
 
 router.post("/vote/:postId", postController.voteOnPost);
+
+router.post("/voteComment/:commentId", commentController.voteOnComment);
 
 
 router.use("/page=:pageNum/:filter?", (req, res, next) => {

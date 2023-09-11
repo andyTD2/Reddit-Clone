@@ -61,7 +61,7 @@ const loadMoreComments = async function(req, res) {
         res.status(404).send("Page Not Found")
     }
 
-    res.render(baseDir + "/views/commentList", {comments: comments, pageNum: req.params.pageNum + 1});
+    res.render(baseDir + "/views/commentList", {comments: comments, pageNum: req.params.pageNum});
 }
 
 module.exports = {createComment, voteOnComment, loadMoreComments};

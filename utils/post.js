@@ -7,7 +7,7 @@ const queryDb = db.queryDb;
 const {parseTimeSinceCreation} = require(baseDir + "/utils/misc");
 
 class Post {
-    constructor(id, title, content, numVotes, userId, userName, minutes_ago, voteDirection, pageNum)
+    constructor(id, title, content, numVotes, userId, userName, minutes_ago, voteDirection, numComments, pageNum)
     {
         if(!pageNum) this.pageNum = 1;
         else this.pageNum = pageNum;
@@ -20,6 +20,7 @@ class Post {
         this.userName = userName;
         this.timeSinceCreation = parseTimeSinceCreation(minutes_ago);
         this.voteDirection = voteDirection;
+        this.numComments = numComments;
     }
 
 }
@@ -48,7 +49,6 @@ const getPostData = async function(userId, postId)
 const getPostVoteDirection = async function(userId, postId)
 {
     if(!userId) return 0;
-
     let result = await queryDb("SELECT * FROM postVotes WHERE user_id = ? AND post_id = ?", [userId, postId]);
     if (result.length === 0) return 0;
     if (result.length > 1) throw new Error(`Duplicate postVote records for user: ${userId} on post: ${postId}`);

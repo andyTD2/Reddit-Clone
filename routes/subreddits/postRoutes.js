@@ -17,7 +17,7 @@ router.post("/newPost", postController.createPost);
 
 router.post("/:postId/newComment", commentController.createComment);
 
-router.post("/comment/:commentId/vote", commentController.voteOnComment);
+//router.post("/comment/:commentId/vote", commentController.voteOnComment);
 
 router.get("/:postId/page=:pageNum/:filter?", commentController.loadMoreComments);
 

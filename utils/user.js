@@ -20,7 +20,7 @@ const bcrypt = require("bcrypt");
 const authenticateUser = async function(req, res) {
     if (req.session.loggedIn)
     {
-        res.redirect("back");
+        res.status(200).send("Already logged in.");
         return;
     }
 
@@ -36,12 +36,12 @@ const authenticateUser = async function(req, res) {
 
     if(result.length === 0 || !(await bcrypt.compare(req.body.password, result[0].userPassword)))
     {
-        res.send("Incorrect password or user does not exist.");
+        res.status(401).send("Incorrect password or user does not exist.");
         return;
     }
 
     logIn(result[0].userName, result[0].id, req);
-    res.redirect("/");
+    res.status(200).send("Successfully logged in.");
 };
 
 

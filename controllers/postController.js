@@ -1,4 +1,5 @@
 "use strict";
+
 const errors = require(baseDir + "/utils/error");
 const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
@@ -6,7 +7,7 @@ const mysql = db.mysql;
 const queryDb = db.queryDb;
 
 const {updateRank, calculateRank} = require(baseDir + "/utils/updateRanking");
-const {getPostData, getPostVoteDirection, Post} = require(baseDir + "/utils/post");
+const {getPostData, getPostVoteDirection, getNumComments, Post} = require(baseDir + "/utils/post");
 const {getCommentData} = require(baseDir + "/utils/comment");
 
 const getPost = async function(req, res, next)
@@ -19,7 +20,7 @@ const getPost = async function(req, res, next)
     }
     
     req.postObj = new Post(req.params.postId, postData.title, postData.content, postData.numVotes, 
-        postData.userId, postData.userName, postData.minutes_ago, await getPostVoteDirection(req.session.userID, req.params.postId));
+        postData.userId, postData.userName, postData.minutes_ago, await getPostVoteDirection(req.session.userID, req.params.postId), await getNumComments(req.params.postId));
     // /        constructor(id, title, content, numVotes, userId, userName, pageNum)
     next();
 }

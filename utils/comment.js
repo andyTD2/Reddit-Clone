@@ -51,9 +51,10 @@ const getChildrenOfComment = async function(commentList, postId, userId) {
 const getCommentData = async function(req)
 {
     if(!req.params.pageNum) req.params.pageNum = 1;
-    else req.params.pageNum = parseInt(req.params.pageNum);
+    else req.params.pageNum = parseInt(req.params.pageNum) + 1;
     if(!req.params.filter) req.params.filter = "top";
 
+    console.log(req.params.pageNum);
     let query = commentFilters[req.params.filter];
     if(!query)
     {
