@@ -9,6 +9,7 @@ const queryDb = db.queryDb;
 const {updateRank, calculateRank} = require(baseDir + "/utils/updateRanking");
 const {getPostData, getPostVoteDirection, getNumComments, Post} = require(baseDir + "/utils/post");
 const {getCommentData} = require(baseDir + "/utils/comment");
+const {isValidUrl, getArticleTitle} = require(baseDir + "/utils/misc");
 
 const getPost = async function(req, res, next)
 {
@@ -19,7 +20,7 @@ const getPost = async function(req, res, next)
         return;
     }
     
-    req.postObj = new Post(req.params.postId, postData.title, postData.content, postData.numVotes, 
+    req.postObj = new Post(req.params.postId, postData.title, postData.postLink, postData.content, postData.numVotes, 
         postData.userId, postData.userName, postData.minutes_ago, await getPostVoteDirection(req.session.userID, req.params.postId), await getNumComments(req.params.postId));
     // /        constructor(id, title, content, numVotes, userId, userName, pageNum)
     next();
@@ -29,7 +30,7 @@ const createPostView = async function (req, res)
 {
     let commentData = await getCommentData(req);
     if(!commentData){
-        throw new error("Something happened(Invalid comment data...)")
+        throw new error("Something happened(Invalid comment data...)");
         return;
     }
 
@@ -46,17 +47,34 @@ const createPostView = async function (req, res)
 const createPost = async function(req, res) {
     if(!req.session.loggedIn)
     {
-        res.send("You must be logged in to do that.");
+        res.status(401).send("You must be logged in to do that.");
+        return;
     }
-    else
+    if(req.body.postLink != "")
     {
-        let rankScore = calculateRank(1, new Date());
-        let result = await queryDb("INSERT INTO posts (title, content, subreddit_id, user_id, score) VALUES (?, ?, ?, ?, ?)",
-                                    [req.body.postTitle, req.body.content, req.subredditObj.id, req.session.userID, rankScore]);
-
-        res.redirect(`/r/${req.params.subreddit}/post/${result.insertId}`);
+        if(!isValidUrl(req.body.postLink))
+        {
+            res.status(400).send("Something seems to be wrong with the URL");
+            return;
+        }
+        if(req.body.useArticleTitle)
+        {
+            let articleTitle = await getArticleTitle(req.body.postLink);
+            if(articleTitle != "") req.body.postTitle = articleTitle;
+        }
     }
+    let rankScore = calculateRank(1, new Date());
+
+    let query = mysql.format("INSERT INTO posts (title, content, link, subreddit_id, user_id, score) VALUES (?, ?, ?, ?, ?, ?)", [req.body.postTitle, req.body.postContent, req.body.postLink, req.subredditObj.id, req.session.userID, rankScore]);
+    console.log(query);
+    let result = await queryDb("INSERT INTO posts (title, content, link, subreddit_id, user_id, score) VALUES (?, ?, ?, ?, ?, ?)",
+                                [req.body.postTitle, req.body.postContent, req.body.postLink, req.subredditObj.id, req.session.userID, rankScore]);
+
+
+    res.status(200).send(`${result.insertId}`);
+    //res.redirect(`/r/${req.params.subreddit}/post/${result.insertId}`);
 }
+
 
 const voteOnPost = async function(req, res) {
     if(!req.session.loggedIn)

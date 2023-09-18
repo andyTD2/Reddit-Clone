@@ -20,7 +20,7 @@ body {
 .sidebar {
     float: right;
     width: 300px;
-    background-color: rgb(22, 22, 22);
+    background-color: var(--alt-bg-color-dark);
     height: 300px;
 }
 
@@ -93,68 +93,48 @@ body {
     height: 50px;
 }
 
-.loginModal {
-    color: black;
+.modal {
   background-color: rgb(224, 224, 224);
-    width: 300px;
-    height: 300px;
-    position: fixed;
-    top: 0%;
-    left: 50%;
-    transform: translate(-50%, -100%);
-    display: flex;
-    flex-direction: column;
-    visibility: hidden;
-    transition: transform .5s;
+  position: fixed;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+  transition: transform .5s;
+}
+
+  .closeModal {
+    color: black;
+    text-align: right;
+    margin-right: 10px;
+    margin-top: 10px;
   }
 
-  .loginModalOpened {
+  .modalOpened {
     transform: translate(-50%, 50%);
     visibility: visible;
   }
-  
-  .loginModal div {
-      color: black;
-  }
-  
-  .closeLoginModal {
-      text-align: right;
-      margin-right: 10px;
-      margin-top: 10px;
-  }
-  
-  .loginText {
-      text-align: center;
+
+  .modalText {
+    color: black;
+    text-align: center;
     padding-top: 20px;
     padding-bottom: 20px;
     font-weight: bold;
     font-size: 1.5rem;
   }
-  
-  .loginForm
-  {
-    display: flex;
-    flex-direction: column
-  }
-  
-  .loginForm label {
-    text-align: center
-  }
-  
-  .inputBox {
+
+  .modalInput {
     height: 25px;
     width: 75%;
     align-self: center;
     border-radius: 7px;
     border-style:none;
   }
-  
-  .inputBox::placeholder {
-    color: grey;
-  }
-  
-  
-  .submitBtn {
+
+  .modalSubmit {
     margin-top: 30px;
     width: 100px;
     height: 30px;
@@ -163,25 +143,58 @@ body {
     border-style:none;
     border-radius: 5px;
   }
-  
-  .submitBtn:hover {
+
+  .modalSubmit:hover {
     cursor:pointer;
   }
-  
-  .submitBtn:active {
+
+  .modalSubmit:active {
     margin-top: 32px;
     font-weight: bold;
-  } 
-
-  #loginErrorAuthentication {
-    color: red;
-    text-align: center;
-    display: none;
   }
 
-  #loginErrorGeneric {
+  .modalSubmit::placeholder {
+    color: grey;
+  }
+
+  .modalError {
     color: red;
     text-align: center;
-    display: none;
   }
-  
+
+  .modalForm
+  {
+    display: flex;
+    flex-direction: column
+  }
+
+#loginModal {
+  width: 300px;
+  height: 300px;
+}
+
+#signupModal {
+  width: 500px; 
+  height: 500px;
+}
+
+  .incorrectFormat
+  {
+    color: red;
+  }
+
+  .correctFormat
+  {
+    color: green;
+  }
+
+  .signupRequirements
+  {
+    width: 75%;
+    align-self: center;
+  }
+
+  .modalSuccess {
+    color: black;
+    align-self: center;
+  }

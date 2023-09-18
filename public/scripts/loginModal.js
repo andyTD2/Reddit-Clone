@@ -1,5 +1,5 @@
 function displayLoginModal() {
-    $(".loginModal").addClass("loginModalOpened");
+    $("#loginModal").addClass("modalOpened");
 };
 $(".openLoginModal").on("click", function(e) {
     e.preventDefault();
@@ -7,28 +7,20 @@ $(".openLoginModal").on("click", function(e) {
     });
 
 function closeLoginModal() {
-    $("#loginErrorAuthentication").css("display", "none");
-    $("#loginErrorGeneric").css("display", "none");
-    $(".loginModal").removeClass("loginModalOpened");
+    $("#loginModalError").text("");
+    $("#loginModal").removeClass("modalOpened");
 };
-$(".closeLoginModal").on("click", closeLoginModal);
+$("#closeLoginModal").on("click", closeLoginModal);
 
-$(".loginForm").on("submit", function(e) {
+$("#loginForm").on("submit", function(e) {
     e.preventDefault();
     $.ajax({
         url: "/userLogin",
         type: "post",
-        data: $(".loginForm").serialize(),
+        data: $("#loginForm").serialize(),
         success: function(data) {location.reload();},
-        error: function(xhr, error) {
-            if(xhr.status == 401)
-            {
-                $("#loginErrorAuthentication").css("display", "block");
-            }
-            else
-            {
-                $("#loginErrorGeneric").css("display", "block");
-            }
+        error: function(xhr) {
+            $("#loginModalError").text(xhr.responseText);
         }
     });
 })

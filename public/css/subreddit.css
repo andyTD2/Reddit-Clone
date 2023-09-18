@@ -78,7 +78,7 @@
 }
 
 #currentFilter {
-    color: rgb(199, 48, 17);
+    color: var(--current-selection);
     padding: 4px;
 }
 

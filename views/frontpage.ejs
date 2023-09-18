@@ -10,6 +10,7 @@
     </head>
     <body>
 		<%- include('partials/loginModal') %>
+		<%- include('partials/signupModal') %>
 		<div class="container">
 		
 			<div class="header">
@@ -59,7 +60,11 @@
 							</div>
 							<img src = "/images/text-icon.png" class="postPreview"></img>
 							<div class="postRight">
+								<% if (post.postLink != "") { %>
+								<a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
+								<% } else { %>
 								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+								<% } %>
 								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %> to <%= post.subredditName %></div>
 								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>
@@ -80,12 +85,13 @@
 	<script type = "text/javascript" src="/scripts/postVote.js"></script>
 	<% } else { %>
 	<script type="text/javascript" src="/scripts/loginModal.js"></script>
+	<script type="text/javascript" src="/scripts/signupModal.js"></script>
 	<% } %>
 	<script>
 		$(".posts").on("click.loadmore", ".pageNum", function() {
 			let pageNum = $(".pageNum").attr("data-pageNum");
 			let filter = $(".posts").attr("data-filter");
-			$.get(`/r/<%= subreddit.name %>/next/page=${pageNum}/${filter}`,
+			$.get(`/next/page=${pageNum}/${filter}`,
 			function(data, status)
 			{
 				$(".pageNum").remove();
@@ -97,14 +103,5 @@
 
 
 		var docWidth = document.documentElement.offsetWidth;
-
-[].forEach.call(
-  document.querySelectorAll('*'),
-  function(el) {
-    if (el.offsetWidth > docWidth) {
-      console.log(el);
-    }
-  }
-);
 	</script>
 </html>

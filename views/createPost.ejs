@@ -4,17 +4,73 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <TITLE> CREATE POST </TITLE>
-    <link rel="stylesheet" href="styles.css">
+        <TITLE> all subreddits</TITLE>
+    <link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/createPost.css">
     </head>
     <body>
-        <form action="<%=createPostLink%>" method="POST">
-            <label for="postTitle">Post Title</label>
-            <input type="text" id="postTitle" name="postTitle">
-            <br>
-            <label for="content">Text:</label>
-            <input type="text" id="content" name="content">
-            <input type="submit" value="Submit">
-        </form>
+
+		<%- include('partials/loginModal') %>
+
+		<div class="container">
+		
+			<div class="header">
+				<div class="topbar"> topbar </div>
+				<div class="headerControls">
+					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
+					<%- include('partials/accountControls') %>
+				</div>
+			</div>
+			
+			<div class="feed">
+				<div class="sidebar">
+					<a href="/createSubreddit.html" class="openLoginModal">Create Subreddit!</a>
+					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal"> Create Post</a>
+				</div>
+                <form action="/r/<%= subreddit.name %>/post/newPost" method="POST" id="createPostForm">
+                    <label for="postTitle" class="createFormLabelRequired">Post Title (required)</label>
+                    <input type="text" class="createPostText smallInputBox" id="postTitle" name="postTitle">
+					<br>
+					<label for="postLink">Link</label>
+					<input type="text" class="createPostText smallInputBox" id="postLink" name="postLink"> 
+					 <div id="createPostCheckbox">
+						<input type="checkbox" id="useArticleTitle" class="checkBox" name="useArticleTitle">
+						<label for="useArticleTitle" class="checkboxLabel">Use article title</label><br>
+					</div>
+					<br>
+                    <label for="content">Body</label>
+                    <textarea class="createPostText" id="postContent" name="postContent" rows="20" cols="25"></textarea>
+					<input type="submit" id="createPostSubmit" value="Submit">
+					<div id="createPostError"></div>
+                </form>
+			</div>
+		</div>
     </body>
+	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+	<% if (!locals.username) { %>
+		<script type="text/javascript" src="/scripts/loginModal.js"></script>
+	<% } %>
+
+	<script>
+		$("#createPostForm").on("submit", function(e) {
+			e.preventDefault();
+			$("#createPostError").text("");
+			$.ajax({
+				url: "/r/<%= subreddit.name %>/post/newPost",
+				type: "post",
+				data: $("#createPostForm").serialize(),
+				success: function(data) {
+					location.href = `/r/<%= subreddit.name %>/post/${data}`;
+				},
+				error: function(xhr) {
+					console.log(xhr.error);
+					$("#createPostError").text(xhr.responseText);
+        		}
+    		});
+		})
+	</script>
 </html>

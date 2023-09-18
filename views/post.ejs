@@ -61,8 +61,12 @@
 							</div>
 						</div>
 						<img src = "/images/text-icon.png" class="postPreview"></img>
-						<div class="postRight">
+						<div class="postRight">								
+							<% if (post.postLink != "") { %>
+							<a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
+							<% } else { %>
 							<div class="postTitle"><%= post.title %></div>
+							<% } %>
 							<div class="postTop">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
 							<div class="postBody"><%= post.content %></div>
 						</div>

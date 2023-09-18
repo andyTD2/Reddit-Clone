@@ -46,7 +46,6 @@ const createComment = async function(req, res) {
     }
     else
     {
-        console.log("posTId", req.params.postId);
         let queryValues = [req.body.comment, req.session.userID, req.params.postId, (req.body.parentId ? req.body.parentId : null)];
         let query = "INSERT INTO comments (content, user_id, post_id, parent_id) VALUES (?, ?, ?, ?)";
         query = mysql.format(query, queryValues);

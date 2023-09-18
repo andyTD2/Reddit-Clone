@@ -1,0 +1,22 @@
+<div class="modal" id="signupModal">
+    <div class="closeModal" id="closeSignupModal">X</div>
+    <div class="modalText">SIGN UP</div>
+    <form action="/createUser" method="POST" class="modalForm" id="signupForm">
+        <input type="text" id="usernameSignupInput" name="username" class="modalInput" placeholder="Username">
+        <br>
+        <ul class="signupRequirements">
+            <li class="signupRequirement incorrectFormat" id="usernameLengthRequirement">Username must be between 3 and 20 characters.</li>
+            <li class="signupRequirement correctFormat" id="usernameCharactersRequirement">Username must consist of only the alphabet, numbers, hypens or underscores</li>
+        </ul>
+        <input type="text" id="passwordSignupInput" name="password" class="modalInput" placeholder="Password">
+        <ul class="signupRequirements">
+            <li class="signupRequirement incorrectFormat" id="passwordLengthRequirement">Password must be between 8 and 30 characters</li>
+            <li class="signupRequirement incorrectFormat" id="passwordNumRequirement">Password must have at least 1 number</li>
+            <li class="signupRequirement incorrectFormat" id="passwordAlphaRequirement">Password must have at least 1 alphabetical character</li>
+            <li class="signupRequirement incorrectFormat" id="passwordSpecialRequirement">Password must have at least 1 special character(ONLY: !@._-)</li>
+        </ul>
+        <input type="submit" value="CONTINUE" class="modalSubmit">
+    </form>
+    <div class="modalError" id="signupModalError"></div>
+    <div class="modalSuccess" id="signupModalSuccess"></div>
+</div>

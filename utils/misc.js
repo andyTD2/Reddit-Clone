@@ -1,3 +1,5 @@
+const JSDOM = require("jsdom").JSDOM;
+
 const parseTimeSinceCreation = function (timeInMinutes) {
     timeInMinutes = parseInt(timeInMinutes);
     if (timeInMinutes < 1) return "less than 1 minute ago";
@@ -16,5 +18,22 @@ const getPageNumOffset = function(pageNum)
     return (page - 1) * POSTS_PER_PAGE;
 }
 
-module.exports = { parseTimeSinceCreation, getPageNumOffset
+const isValidUrl = function(url)
+{
+    try {
+        const checkUrk = new URL(url);
+        return true;
+    } catch(err) {
+        return false;
+    }
+}
+
+const getArticleTitle = async function(url)
+{
+    const html = await (await fetch(url)).text();
+    const dom = new JSDOM(html);
+    return dom.window.document.title;
+}
+
+module.exports = { parseTimeSinceCreation, getPageNumOffset, isValidUrl, getArticleTitle
 };

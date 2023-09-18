@@ -17,7 +17,7 @@ const Subreddit = require(baseDir + "/utils/subreddit").Subreddit;
 ///////////////////////////////////
 
 const getSubreddit = async function(req, res, next) {
-    req.subreddit = req.subreddit || req.params.subreddit;
+    req.subreddit = req.params.subreddit;
 
     const result = await getSubredditData(req.subreddit);
     if(result)
@@ -31,7 +31,9 @@ const getSubreddit = async function(req, res, next) {
     }
 }
 
+
 const getPageNum = function(req, res, next) {
+    console.log("page num");
     req.pageNum = req.params.pageNum || 1;
     next();
 }
@@ -79,7 +81,7 @@ const renderSubreddit = async function(req, res) {
 const renderNextPage = async function(req, res) {
     let params = await getNextPage(req);
 
-    if(req.subredditObj.id == 1) res.render(baseDir + "/views/postListFrontPage.ejs", params)
+    if(!req.subredditObj) res.render(baseDir + "/views/postListFrontPage.ejs", params)
     else res.render(baseDir + "/views/postList.ejs", params);
 }
 

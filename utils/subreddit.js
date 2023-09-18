@@ -47,9 +47,9 @@ const getPosts = async function(params) {
     let sqlOffset = getPageNumOffset(params.pageNum);
 
     let query;
-    if(params.id == 1) //id of 1 is a special subreddit that contains posts from all subreddits aka "the frontpage".
+    if(!params.subreddit)
     {
-        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
         LEFT JOIN users ON posts.user_id = users.id
         LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
         ORDER BY ${sqlFilter} DESC LIMIT ${POSTS_PER_PAGE} OFFSET ?`;
@@ -57,12 +57,12 @@ const getPosts = async function(params) {
     }
     else
     {
-        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
         LEFT JOIN users ON posts.user_id = users.id
         LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
         WHERE subreddit_id = ?
         ORDER BY ${sqlFilter} DESC LIMIT ${POSTS_PER_PAGE} OFFSET ?`;
-        query = mysql.format(query, [params.id, sqlOffset]);
+        query = mysql.format(query, [params.subreddit.id, sqlOffset]);
     }
 
     let posts = (await dbCon.query(query))[0];
@@ -87,10 +87,11 @@ const getSubredditData = async function(subredditName) {
 };
 
 const getSubredditView = async function(req) {
+    console.log(req.subredditObj);
     let params = {
         subreddit: req.subredditObj,
         pageNum: req.pageNum,
-        posts: await getPosts({filter: req.params.filter, pageNum: req.pageNum, id: req.subredditObj.id, userID: req.session.userID}),
+        posts: await getPosts({filter: req.params.filter, pageNum: req.pageNum, subreddit: req.subredditObj, userID: req.session.userID}),
         filter: req.params.filter,
         username: req.session.loggedIn ? req.session.user : undefined
     }
@@ -100,7 +101,7 @@ const getSubredditView = async function(req) {
 
 const getNextPage = async function(req) {
     req.pageNum = parseInt(req.pageNum) + 1;
-    const posts = await getPosts({filter: req.params.filter, pageNum: req.pageNum, id: req.subredditObj.id, userID: req.session.userID})
+    const posts = await getPosts({filter: req.params.filter, pageNum: req.pageNum, subreddit: req.subredditObj, userID: req.session.userID})
 
     let params = {
         posts: posts,

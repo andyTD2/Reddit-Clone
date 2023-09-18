@@ -64,14 +64,34 @@ const logOut = function(req, res)
 
 const createUser = async function(req, res)
 {
+    //check if input matches format
+    const usernameValidation = new RegExp("^[a-zA-Z0-9_-]{3,20}$");
+    if(!usernameValidation.test(req.body.username))
+    {
+        res.status(400).send("Username does not meet requirements!");
+        return;
+    }
+
+    //check if passwords meets format
+    const atLeastOneNum = new RegExp(".*[0-9].*");
+    const atLeastOneAlpha = new RegExp(".*[a-zA-Z].*");
+    const atLeastOneSpecial = new RegExp(".*[!@._-].*");
+    const passwordValidation = new RegExp("^[a-zA-Z0-9!@._-]{8,30}$")
+
+    if (!passwordValidation.test(req.body.password) || !atLeastOneAlpha.test(req.body.password) || !atLeastOneNum.test(req.body.password) || !atLeastOneSpecial.test(req.body.password))
+    {
+        res.status(400).send("Password does not meet requirements!");
+        return;
+    }
+
     //checking if username exists
     let sql = "SELECT * FROM users WHERE userName = ?;";
     sql = mysql.format(sql, [req.body.username]);
-    result = await dbCon.query(sql);
+    let result = await dbCon.query(sql);
 
     if(result[0].length > 0)
     {
-        res.send("Username already taken!");
+        res.status(400).send("Username already taken!");
         return;
     }
 
@@ -81,7 +101,7 @@ const createUser = async function(req, res)
     sql = mysql.format(sql, [req.body.username, hashedPassword]);
     result = await dbCon.query(sql);
     logIn(req.body.username, result[0].insertId, req);
-    res.send("Account Created!");
+    res.status(200).send("Account Created!");
 }
 
 

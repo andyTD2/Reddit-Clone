@@ -54,7 +54,6 @@ const getCommentData = async function(req)
     else req.params.pageNum = parseInt(req.params.pageNum) + 1;
     if(!req.params.filter) req.params.filter = "top";
 
-    console.log(req.params.pageNum);
     let query = commentFilters[req.params.filter];
     if(!query)
     {

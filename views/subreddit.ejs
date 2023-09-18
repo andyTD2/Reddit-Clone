@@ -62,7 +62,11 @@
 							</div>
 							<img src = "/images/text-icon.png" class="postPreview"></img>
 							<div class="postRight">
+								<% if (post.postLink != "") { %>
+								<a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
+								<% } else { %>
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+								<% } %>
 								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>

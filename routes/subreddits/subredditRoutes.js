@@ -19,42 +19,32 @@ const commentController = require(baseDir + "/controllers/commentController");
 router.post("/createSubreddit", subreddit.createSubreddit);
 
 
-router.use("/r/:subreddit/:filter?", subreddit.getSubreddit);
-router.use("/r/:subreddit/:filter?", subreddit.getPageNum);
-router.get("/r/:subreddit/:filter?", subreddit.renderSubreddit);
-
+router.use("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.getSubreddit);
+router.use("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.getPageNum);
+router.get("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.renderNextPage);
 
 router.use("/r/:subreddit/page=:pageNum/:filter?", subreddit.getSubreddit);
 router.use("/r/:subreddit/page=:pageNum/:filter?", subreddit.getPageNum);
 router.get("/r/:subreddit/page=:pageNum/:filter?", subreddit.renderSubreddit);
 
-
-router.use("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.getSubreddit);
-router.use("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.getPageNum);
-router.get("/r/:subreddit/next/page=:pageNum/:filter?", subreddit.renderNextPage);
-
-
 router.use("/r/:subreddit/post/", subreddit.getSubreddit);
 router.use("/r/:subreddit/post/", posts);
 
+
+router.use("/r/:subreddit/:filter?", subreddit.getSubreddit);
+router.use("/r/:subreddit/:filter?", subreddit.getPageNum);
+router.get("/r/:subreddit/:filter?", subreddit.renderSubreddit);
 
 router.post("/vote/:postId", postController.voteOnPost);
 
 router.post("/voteComment/:commentId", commentController.voteOnComment);
 
+router.use("/next/page=:pageNum/:filter?", subreddit.getPageNum);
+router.get("/next/page=:pageNum/:filter?", subreddit.renderNextPage)
 
-router.use("/page=:pageNum/:filter?", (req, res, next) => {
-    req.subreddit = "ALL";
-    subreddit.getSubreddit(req, res, next);
-});
 router.use("/page=:pageNum/:filter?", subreddit.getPageNum);
 router.get("/page=:pageNum/:filter?", subreddit.renderFrontPage);
 
-
-router.use("/:filter?", (req, res, next) => {
-    req.subreddit = "ALL";
-    subreddit.getSubreddit(req, res, next);
-});
 router.use("/:filter?", subreddit.getPageNum);
 router.get("/:filter?", subreddit.renderFrontPage);
 

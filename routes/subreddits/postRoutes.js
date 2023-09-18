@@ -5,15 +5,16 @@ const postController = require(baseDir + "/controllers/postController");
 const commentController = require(baseDir + "/controllers/commentController")
 
 router.get("/newPost", async function(req, res) {
-    console.log("x");
-    res.render("createPost", {createPostLink: `/r/${req.params.subreddit}/post/newPost`})
+    res.render("createPost", {username: req.session.loggedIn ? req.session.user : undefined, subreddit: req.subredditObj})
 });
+
+router.post("/newPost", postController.createPost);
 
 router.use("/:postId/", postController.getPost);
 
 router.get("/:postId/:filter?", postController.createPostView);
 
-router.post("/newPost", postController.createPost);
+
 
 router.post("/:postId/newComment", commentController.createComment);
 

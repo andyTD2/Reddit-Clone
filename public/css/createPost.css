@@ -1,0 +1,71 @@
+#createPostForm
+{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--alt-bg-color-dark);
+    margin: 10px;
+    padding: 20px;
+    width: 50%;
+    border-radius: 5px;
+}
+
+
+.sidebar 
+{
+    margin-left: 10px;
+}
+
+
+.createPostText
+{
+    color: white;
+}
+
+.smallInputBox
+{
+    height: 40px;
+    font-size: 1.5em;
+}
+
+#createPostSubmit
+{
+    width: 75px;
+}
+
+.createPostText 
+{
+    background-color: var(--main-bg-color);
+    border: none;
+    border-radius: 5px;
+}
+
+
+.checkboxLabel
+{
+    font-size: .75rem;
+    align-self: center;
+}
+
+#createPostCheckbox{
+    display: flex;
+    flex-direction: row;
+}
+
+#createPostError{
+    color: red;
+}
+
+#createPostSubmit
+{
+    background-color: var(--alt-bg-color-two);
+    border-style: none;
+    color: white;
+}
+
+#createPostSubmit:active
+{
+    background-color: var(--alt-bg-color);
+    border-style: none;
+    color: var(--current-selection);
+}
+
