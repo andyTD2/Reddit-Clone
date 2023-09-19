@@ -7,7 +7,7 @@ const queryDb = db.queryDb;
 const {parseTimeSinceCreation} = require(baseDir + "/utils/misc");
 
 class Post {
-    constructor(id, title, postLink, content, numVotes, userId, userName, minutes_ago, voteDirection, numComments, pageNum)
+    constructor(id, title, postLink, imgSrc, content, numVotes, userId, userName, minutes_ago, voteDirection, numComments, pageNum)
     {
         if(!pageNum) this.pageNum = 1;
         else this.pageNum = pageNum;
@@ -22,6 +22,7 @@ class Post {
         this.voteDirection = voteDirection;
         this.numComments = numComments;
         this.postLink = postLink;
+        this.imgSrc = imgSrc;
     }
 
 }
@@ -34,7 +35,7 @@ const getNumComments = async function(postId)
 
 const getPostData = async function(userId, postId)
 {
-    let query = `SELECT POSTS.id, title, numVotes, content, link as postLink, subreddit_id AS subredditId, user_id AS userId, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) as minutes_ago from posts 
+    let query = `SELECT POSTS.id, title, numVotes, content, imgSrc, link as postLink, subreddit_id AS subredditId, user_id AS userId, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) as minutes_ago from posts 
     LEFT JOIN users ON posts.user_id = users.id
     WHERE posts.id = ?;`;
 

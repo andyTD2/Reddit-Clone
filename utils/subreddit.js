@@ -49,7 +49,7 @@ const getPosts = async function(params) {
     let query;
     if(!params.subreddit)
     {
-        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, imgSrc, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
         LEFT JOIN users ON posts.user_id = users.id
         LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
         ORDER BY ${sqlFilter} DESC LIMIT ${POSTS_PER_PAGE} OFFSET ?`;
@@ -57,7 +57,7 @@ const getPosts = async function(params) {
     }
     else
     {
-        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+        query = `SELECT POSTS.id, numVotes, posts.title AS title, content, imgSrc, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
         LEFT JOIN users ON posts.user_id = users.id
         LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
         WHERE subreddit_id = ?

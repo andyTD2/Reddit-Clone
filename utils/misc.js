@@ -21,19 +21,36 @@ const getPageNumOffset = function(pageNum)
 const isValidUrl = function(url)
 {
     try {
-        const checkUrk = new URL(url);
+        const checkUrl = new URL(url);
         return true;
     } catch(err) {
         return false;
     }
 }
 
-const getArticleTitle = async function(url)
+const getHtml = async function(url)
 {
-    const html = await (await fetch(url)).text();
-    const dom = new JSDOM(html);
+    let html;
+    try {
+        html = await fetch(url);
+    } catch(err) {
+        console.log(err);
+        return undefined;
+    }
+
+    html = await html.text();
+    return new JSDOM(html);
+}
+
+const getArticleTitle = function(dom)
+{
     return dom.window.document.title;
 }
 
-module.exports = { parseTimeSinceCreation, getPageNumOffset, isValidUrl, getArticleTitle
+const getArticleImageSrc = function(dom)
+{
+    return dom.window.document.querySelector("meta[property='og:image']").getAttribute("content");
+}
+
+module.exports = { parseTimeSinceCreation, getPageNumOffset, isValidUrl, getHtml, getArticleTitle, getArticleImageSrc
 };

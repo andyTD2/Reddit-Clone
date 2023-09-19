@@ -60,7 +60,11 @@
 
 							</div>
 						</div>
-						<img src = "/images/text-icon.png" class="postPreview"></img>
+						<% if (post.imgSrc == "") { %>
+						<img src="/images/text-icon.png" class="postPreview"></img>
+						<% } else { %>
+						<img src="<%= post.imgSrc %>" class="postPreview"></img>
+						<% } %>
 						<div class="postRight">								
 							<% if (post.postLink != "") { %>
 							<a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
