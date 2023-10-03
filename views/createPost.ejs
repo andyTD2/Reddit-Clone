@@ -24,8 +24,10 @@
 			
 			<div class="feed">
 				<div class="sidebar">
-					<a href="/createSubreddit.html" class="openLoginModal">Create Subreddit!</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal"> Create Post</a>
+					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
+					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal" id="createPostLink"> Create Post</a>
+					<div id="subredditDescription"><%= subreddit.description %></div>
+					<div id="subredditSidebar"><%- subreddit.sidebar %></div>
 				</div>
                 <form action="/r/<%= subreddit.name %>/post/newPost" method="POST" id="createPostForm">
                     <label for="postTitle" class="createFormLabelRequired">Post Title (required)</label>
@@ -41,7 +43,7 @@
                     <label for="content">Body</label>
                     <textarea class="createPostText" id="postContent" name="postContent" rows="20" cols="25"></textarea>
 					<input type="submit" id="createPostSubmit" value="Submit">
-					<div id="createPostError"></div>
+					<div id="createPostError" class="errMsg"></div>
                 </form>
 			</div>
 		</div>

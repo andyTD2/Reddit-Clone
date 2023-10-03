@@ -53,6 +53,7 @@ app.set('view engine', 'ejs');
 
 const accountControlRoutes = require('./routes/accountControls/accountControlRoutes');
 const subredditControlRoutes = require('./routes/subreddits/subredditRoutes');
+app.use("/", require( baseDir + "/controllers/accountController").getUser);
 app.use("/", accountControlRoutes);
 app.use("/", subredditControlRoutes);
 

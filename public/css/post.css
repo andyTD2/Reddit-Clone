@@ -185,9 +185,20 @@
     border-color: var(--alt-bg-color-light);
 }
 
-#currentFilter {
+.currentFilter {
     color: rgb(199, 48, 17);
     padding-top: 4px;
     padding-left: 4px;
     padding-right: 4px;
 }
+
+.postTitleLink {
+    text-decoration: none;
+    color: var(--link-font-color);
+}
+
+.postTitleLink:visited {
+    text-decoration: none;
+    color: var(--link-font-color);
+}
+

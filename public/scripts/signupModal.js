@@ -21,7 +21,7 @@ $("#signupForm").on("submit", function(e) {
             type: "post",
             data: $("#signupForm").serialize(),
             success: function(msg) {
-                $("#signupModalSuccess").text("Account successfully creating! Redirecting soon...");
+                $("#signupModalSuccess").text("Account successfully created! Redirecting soon...");
                 setTimeout(function() {
                     location.reload();
                 }, 5000);},

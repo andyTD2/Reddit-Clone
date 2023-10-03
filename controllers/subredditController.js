@@ -22,7 +22,7 @@ const getSubreddit = async function(req, res, next) {
     const result = await getSubredditData(req.subreddit);
     if(result)
     {
-        req.subredditObj = new Subreddit(result.id, result.title);
+        req.subredditObj = new Subreddit(result.id, result.title, result.description, result.sidebar);
         next();
     }
     else
@@ -48,31 +48,41 @@ const getPageNum = function(req, res, next) {
 const createSubreddit = async function(req, res) {
     if(!req.session.loggedIn)
     {
-        res.send("You must be logged in to do that.");
+        res.status(401).send("You must be logged in to do that.");
+        return;
     }
-    else
+    if(req.body.subredditName.length < 3 || req.body.subredditName.length > 30)
     {
-        if(await getSubredditData(req.body.subredditName))
-        {
-            res.send("This subreddit name has already been taken.");
-        }
-        else
-        {
-            let query = "INSERT INTO subreddits (title, description, sidebar, createdBy) VALUES(?, ?, ?, ?)"
-            query = mysql.format(query, [req.body.subredditName, req.body.description, req.body.sidebar, req.session.userID]);
-            let result = await dbCon.query(query);
-            res.redirect(`/r/${req.body.subredditName}`);
-        }
+        res.status(400).send("Subreddit name must be between 3 and 30 characters.");
+        return;
     }
+    const alphanumeric = new RegExp("^[a-zA-Z0-9]*$");
+    if(!alphanumeric.test(req.body.subredditName))
+    {
+        res.status(400).send("Subreddit name may only consist of letters and numbers.");
+        return;
+    }
+    if(await getSubredditData(req.body.subredditName))
+    {
+        res.status(400).send("This subreddit name has already been taken.");
+        return;
+    }
+
+    let query = "INSERT INTO subreddits (title, description, sidebar, createdBy) VALUES(?, ?, ?, ?)"
+    query = mysql.format(query, [req.body.subredditName, req.body.description, req.body.sidebar, req.session.userID]);
+    let result = await dbCon.query(query);
+    res.send(`/r/${req.body.subredditName}`);
 }
 
 
 const renderFrontPage = async function(req, res) {
+    console.log("rendering frontpage");
     let params = await getSubredditView(req);
     res.render("frontpage", params);
 }
 
 const renderSubreddit = async function(req, res) {
+    console.log("rendering subrreddit")
     let params = await getSubredditView(req);
     res.render("subreddit", params);
 }

@@ -1,11 +1,11 @@
 <% function displayComment(comment, evens) { %>
     <% if (evens) { %>
-        <div class="commentBox even" data-commentId="<%= comment.id %>">
+        <div class="commentBox even">
     <% } else { %>
-        <div class="commentBox odd" data-commentId="<%= comment.id %>">
+        <div class="commentBox odd">
     <% } %>
             <div class="comment">
-                <div class="vote">
+                <div class="vote" data-commentId="<%= comment.id %>">
                     <% if (comment.voteDirection == 1) { %>
                         <img src="/images/up-arrow-green.png" class="upvote">
                     <%  } else {  %>

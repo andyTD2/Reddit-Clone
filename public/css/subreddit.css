@@ -77,12 +77,30 @@
     border-color: var(--alt-bg-color-light);
 }
 
-#currentFilter {
-    color: var(--current-selection);
+.currentFilter {
+    color: var(--current-selection) !important;
     padding: 4px;
 }
 
 .postPreview {
     justify-self: center;
     align-self: center;
+}
+
+#subredditDescription
+{
+    margin-top: 10px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--alt-bg-color-two);
+    padding: 5px;
+}
+
+#subredditSidebar
+{
+    margin-top: 10px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--alt-bg-color-two);
+    padding: 5px;
 }

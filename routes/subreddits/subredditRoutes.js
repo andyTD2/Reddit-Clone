@@ -16,6 +16,9 @@ const commentController = require(baseDir + "/controllers/commentController");
 */
 
 
+router.get("/createSubreddit", function(req, res) {
+    res.render("createSubreddit", {username: req.session.loggedIn ? req.session.user : undefined})
+})
 router.post("/createSubreddit", subreddit.createSubreddit);
 
 

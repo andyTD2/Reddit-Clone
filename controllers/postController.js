@@ -8,8 +8,10 @@ const queryDb = db.queryDb;
 
 const {updateRank, calculateRank} = require(baseDir + "/utils/updateRanking");
 const {getPostData, getPostVoteDirection, getNumComments, Post} = require(baseDir + "/utils/post");
+const {getUserSubscriptionStatus} = require(baseDir + "/utils/subreddit");
 const {getCommentData} = require(baseDir + "/utils/comment");
 const {isValidUrl, getHtml, getArticleTitle, getArticleImageSrc} = require(baseDir + "/utils/misc");
+
 
 const getPost = async function(req, res, next)
 {
@@ -39,7 +41,8 @@ const createPostView = async function (req, res)
         post: req.postObj,
         comments: commentData,
         username: req.session.loggedIn ? req.session.user : undefined,
-        filter: req.params.filter ? req.params.filter : "top"
+        filter: req.params.filter ? req.params.filter : "top",
+        isSubscribed: (req.session.loggedIn && req.subredditObj) ? (await getUserSubscriptionStatus(req.session.userID, req.subredditObj.id)) : false
     }
     res.render(baseDir + "/views/post", params);
 }

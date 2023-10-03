@@ -1,0 +1,67 @@
+<% activities.forEach((activity) => { %>
+    <% if (activity.commentId) { %>
+    <div class="comment">
+        <a href="/r/<%= activity.subredditTitle %>/post/<%= activity.postId %>" class="postTitle"><%= activity.postTitle %> <span class="postInfo">submitted <%= activity.timeSincePostCreation %> by <%= activity.postAuthor %></span></a>
+        <div class="commentContent">
+            <div class="vote" data-commentId="<%= activity.commentId %>">
+                <% if (activity.commentVoteDirection == 1) { %>
+                    <img src="/images/up-arrow-green.png" class="upvote openLoginModal">
+                <%  } else {  %>
+                    <img src="/images/up-arrow.png" class="upvote openLoginModal">
+                <% } %>
+
+                <div class="voteCount">
+                    <%= activity.numCommentVotes %>
+                </div>
+
+                <% if (activity.commentVoteDirection == -1) { %>
+                    <img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
+                <% } else { %>
+                    <img src="/images/down-arrow.png" class="downvote openLoginModal">
+                <% } %>
+            </div>
+            <div class="commentRight">
+                <div class="commentInfo">comment by <%= profileName %> <%= activity.timeSinceCommentCreation %></div>
+                <div class="commentContent"><%= activity.commentContent %></div>
+            </div>
+        </div>
+    </div>
+    <% } else { %>
+    <div class="post">
+        <div class="vote" data-postId="<%= activity.postId %>">
+            <% if (activity.voteDirection == 1) { %>
+                <img src="/images/up-arrow-green.png" class="upvote openLoginModal">
+            <%  } else {  %>
+                <img src="/images/up-arrow.png" class="upvote openLoginModal">
+            <% } %>
+
+            <div class="voteCount">
+                <%= activity.numPostVotes %>
+            </div>
+
+            <% if (activity.voteDirection == -1) { %>
+                <img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
+            <% } else { %>
+                <img src="/images/down-arrow.png" class="downvote openLoginModal">
+            <% } %>
+        </div>
+        <% if (activity.imgSrc == "") { %>
+        <img src="/images/text-icon.png" class="postPreview"></img>
+        <% } else { %>
+        <img src="<%= activity.imgSrc %>" class="postPreview"></img>
+        <% } %>
+        <div class="postRight">
+            <% if (activity.postLink != "") { %>
+            <a href="<%= activity.postLink %>" class="postTitle"><%= activity.postTitle %></a>
+            <% } else { %>
+            <a href="/r/<%= activity.subredditTitle %>/post/<%= activity.postId %>" class="postTitle"><%= activity.postTitle %></a>
+            <% } %>
+            <div class="postInfo">submitted <%= activity.timeSinceCreation %></div>
+            <a href="/r/<%= activity.subredditTitle %>/post/<%= activity.postId %>" class="postComments"><%= activity.numComments %> comments</a>
+        </div>
+    </div>
+    <% } %>
+<% }) %>
+<% if (activities.length > 0) {%>
+<div class="pageNum" data-pageNum="<%= pageNum %>">LOAD MORE</div>
+<% } %>

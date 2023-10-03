@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/styles.css">
+        <link rel="stylesheet" href="/css/createSubreddit.css">
+        <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+        <TITLE> CREATE SUBREDDIT </TITLE>
+    </head>
+    <body>
+		<%- include('partials/loginModal') %>
+
+		<div class="container">
+		
+			<div class="header">
+				<div class="topbar"> topbar </div>
+				<div class="headerControls">
+                    <div class="subName subredditNamePreview"></div>
+					<%- include('partials/accountControls') %>
+				</div>
+			</div>
+			
+			<div class="feed">
+                <div class="sidebar">
+					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
+					<div id="subredditDescription">Preview the description here</div>
+					<div id="subredditSidebar">Preview the sidebar here</div>
+				</div>
+                <form action="/createSubreddit" method="POST" id="createSubredditForm">
+                    <label for="subredditName">Subreddit Name</label>
+                    <input type="text" class="createSubredditText smallInputBox" id="subredditName" name="subredditName" maxlength="30">
+                    <br>
+                    <label for="description">Description</label>
+                    <input type="text" class="createSubredditText smallInputBox" id="description" name="description">
+                    <br>
+                    <label for="sidebar">Sidebar</label>
+                    <div id="editor" name="sidebar">
+                    </div>
+                    <div id="createSubredditError" class="errMsg"></div>
+                    <input type="submit" id="createSubredditSubmit" value="Submit">
+                </form>
+			</div>
+		</div>
+    </body>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous">
+	</script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script>
+        let quill = new Quill('#editor', {
+            theme: 'snow'
+        });
+
+        $("#createSubredditSubmit").on("click", function(e) {
+            e.preventDefault();
+
+            $.ajax({
+				url: "/createSubreddit",
+				type: "post",
+				data: {
+                    "subredditName": $("#subredditName").val(),
+                    "description": $("#description").val(),
+                    "sidebar": quill.root.innerHTML
+                },
+				success: function(data) {
+					location.href = data;
+				},
+				error: function(xhr) {
+					$("#createSubredditError").text(xhr.responseText);
+        		}
+    		});
+        })
+
+        $(".ql-editor").on("input", function() {
+            console.log(quill.root.innerHTML);
+            $("#subredditSidebar").html(quill.root.innerHTML.replaceAll(" ", "&nbsp;").replaceAll("\t", "&emsp;"));
+        })
+         
+        $("#subredditName").on("input", function() {
+            $(".subredditNamePreview").text($("#subredditName").val());
+        })
+
+        $("#description").on("input", function() {
+            $("#subredditDescription").text($("#description").val());
+        })
+    </script>
+	<% if (!locals.username) { %>
+	<script type="text/javascript" src="/scripts/loginModal.js"></script>
+	<% } %>
+</html>

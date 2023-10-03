@@ -19,15 +19,15 @@
 					<a href="/all" class="subName">FRONTPAGE</a>
 					<div class="filters">
 						<% if (filter == "hot") { %>
-							<a href="/hot" id="currentFilter">hot</a>
+							<a href="/hot" class="currentFilter">hot</a>
 						<% } else { %> <a href="/hot">hot</a> <% } %>
 
 						<% if (filter == "top") { %>
-							<a href="/top" id="currentFilter">top</a>
+							<a href="/top" class="currentFilter">top</a>
 						<% } else { %> <a href="/top">top</a> <% } %>
 
 						<% if (filter == "new") { %>
-							<a href="/new" id="currentFilter">new</a>
+							<a href="/new" class="currentFilter">new</a>
 						<% } else { %> <a href="/new">new</a> <% } %>
 					</div>
 					<%- include('partials/accountControls') %>
@@ -36,12 +36,12 @@
 			
 			<div class="feed">
 				<div class="sidebar">
-					<a href="/createSubreddit.html" class="openLoginModal">Create Subreddit!</a>
+					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
 				</div>
-				<div class="posts" data-filter="<%= filter %>">
+				<div class="contentFeed posts" data-filter="<%= filter %>">
 					<% posts.forEach((post) => { %>
-						<div class="post" data-postId="<%= post.id %>">
-							<div class="vote">
+						<div class="post">
+							<div class="vote" data-postId="<%= post.id %>">
 								<% if (post.voteDirection == 1) { %>
 									<img src="/images/up-arrow-green.png" class="upvote openLoginModal">
 								<%  } else {  %>
@@ -86,7 +86,7 @@
 		crossorigin="anonymous">
 	</script>
 	<% if (locals.username) { %>
-	<script type = "text/javascript" src="/scripts/postVote.js"></script>
+	<script type = "text/javascript" src="/scripts/vote.js"></script>
 	<% } else { %>
 	<script type="text/javascript" src="/scripts/loginModal.js"></script>
 	<script type="text/javascript" src="/scripts/signupModal.js"></script>
@@ -101,7 +101,6 @@
 				$(".pageNum").remove();
 				const insert = document.getElementsByClassName("posts")[0];
 				insert.insertAdjacentHTML('beforeend', data);
-				console.log(data);
 			});
 		})
 

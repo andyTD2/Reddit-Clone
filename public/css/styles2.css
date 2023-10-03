@@ -27,14 +27,22 @@ body {
     flex-direction: column;
 }
 
-.sidebarBtn {
+#createSubredditLink
+{
   background-color: var(--alt-bg-color-two);
   font-size: 1.75rem;
   text-align: center;
   text-decoration: none;
-  margin-bottom: 2px;
 }
 
+#createPostLink
+{
+  background-color: var(--alt-bg-color-two);
+  font-size: 1.75rem;
+  text-align: center;
+  margin-top: 2px;
+  text-decoration: none;
+}
 
 .sidebar a {
     color: var(--link-font-color);
@@ -234,4 +242,38 @@ body {
     border-width: 2px;
     border-color: var(--alt-bg-color-two);
     padding: 5px;
+}
+
+
+.comment
+{
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid;
+  border-color: white;
+}
+
+.commentContent
+{
+  display: flex;
+  flex-direction: row;
+}
+
+.commentInfo
+{
+  font-size: .6rem;
+  text-decoration: none;
+  margin-bottom: 3px;
+}
+
+.profileName{
+  align-self: flex-end;
+  padding-left: 30px;
+  margin-right: 10px;
+  text-decoration: none;
+  color: var(--link-font-color);
+  font-size: 2rem;
 }

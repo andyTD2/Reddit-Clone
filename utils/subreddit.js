@@ -8,7 +8,7 @@ const mysql = db.mysql;
 const queryDb = db.queryDb;
 const { getPostVoteDirection, getNumComments } = require(baseDir + "/utils/post");
 const {parseTimeSinceCreation, getPageNumOffset} = require(baseDir + "/utils/misc");
-global.POSTS_PER_PAGE = 5;
+global.POSTS_PER_PAGE = 20;
 
 const filters = {
 
@@ -18,10 +18,12 @@ const filters = {
 }
 
 class Subreddit {
-    constructor(id, name, pageNum)
+    constructor(id, name, description, sidebar, pageNum)
     {
         this.id = id;
         this.name = name;
+        this.description = description;
+        this.sidebar = sidebar;
         this.moderators = [];
     }
 
@@ -47,7 +49,7 @@ const getPosts = async function(params) {
     let sqlOffset = getPageNumOffset(params.pageNum);
 
     let query;
-    if(!params.subreddit)
+    if(!params.subreddit) //get posts from all subreddits if frontpage
     {
         query = `SELECT POSTS.id, numVotes, posts.title AS title, content, imgSrc, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
         LEFT JOIN users ON posts.user_id = users.id
@@ -86,14 +88,20 @@ const getSubredditData = async function(subredditName) {
     return result[0];
 };
 
+const getUserSubscriptionStatus = async function(userId, subredditId)
+{
+    return (await queryDb("SELECT * FROM subredditSubscriptions WHERE user_id = ? AND subreddit_id = ?", [userId, subredditId])).length;
+}
+
 const getSubredditView = async function(req) {
-    console.log(req.subredditObj);
+
     let params = {
         subreddit: req.subredditObj,
         pageNum: req.pageNum,
         posts: await getPosts({filter: req.params.filter, pageNum: req.pageNum, subreddit: req.subredditObj, userID: req.session.userID}),
-        filter: req.params.filter,
-        username: req.session.loggedIn ? req.session.user : undefined
+        filter: req.params.filter || "hot",
+        username: req.session.loggedIn ? req.session.user : undefined,
+        isSubscribed: (req.session.loggedIn && req.subredditObj) ? (await getUserSubscriptionStatus(req.session.userID, req.subredditObj.id)) : false
     }
 
     return params;
@@ -112,4 +120,4 @@ const getNextPage = async function(req) {
 }
 
 
-module.exports = {getPosts, getSubredditData, loadSubreddit, getSubredditView, getNextPage, Subreddit};
+module.exports = {getPosts, getSubredditData, loadSubreddit, getSubredditView, getNextPage, getUserSubscriptionStatus, Subreddit};

@@ -1,0 +1,76 @@
+#createSubredditForm
+{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--alt-bg-color-dark);
+    margin: 10px;
+    padding: 20px;
+    width: 50%;
+    border-radius: 5px;
+}
+
+.createSubredditText 
+{
+    background-color: var(--main-bg-color);
+    border: none;
+    border-radius: 5px;
+    color: white;
+}
+
+.smallInputBox
+{
+    height: 40px;
+    font-size: 1.5em;
+}
+
+#createSubredditError{
+    color: red;
+}
+
+#createSubredditSubmit
+{
+    background-color: var(--alt-bg-color-two);
+    border-style: none;
+    color: white;
+    width: 75px;
+}
+
+#createSubredditSubmit:active
+{
+    background-color: var(--alt-bg-color);
+    border-style: none;
+    color: var(--current-selection);
+}
+
+
+.ql-container {
+    background-color: var(--main-bg-color);
+
+}
+
+.ql-header{
+    color: var(--main-font-color) !important;
+}
+
+.ql-stroke {
+    stroke: var(--main-font-color) !important;
+}
+
+.ql-editor
+{
+    height: 300px !important;
+}
+
+.ql-active
+{
+    background-color: rgb(199, 48, 17) !important;
+}
+
+#subredditSidebar > *
+{
+    margin: 0;
+}
+
+.sidebar
+{
+}

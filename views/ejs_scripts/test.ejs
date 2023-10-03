@@ -1,0 +1,9 @@
+	<script>
+		$("#saveSubreddit").on("click", function(e) {
+			e.preventDefault();
+			$.post(`/changeSubscription`, {subredditId: "<%= subreddit.id %>"}).done(function(msg) {
+				if(msg == "SUBSCRIBED") $("#saveSubreddit").text("Unsubscribe");		
+				else $("#saveSubreddit").text("Subscribe");
+			})
+		});
+	</script>
