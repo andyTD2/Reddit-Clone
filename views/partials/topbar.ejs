@@ -1,0 +1,10 @@
+<div class="topbar">
+    <div id="topbarListOfSubreddits">
+        <a href="/">FRONTPAGE</a>
+        <% if (user) { %>
+            <% user.subscriptionsList.forEach((subscription) => { %>
+                <a href="/r/<%= subscription.title %>" class="subscribedSub"><%= subscription.title %> </a>
+            <% }) %>
+        <% } %>
+    </div>
+</div>

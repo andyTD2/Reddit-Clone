@@ -1,5 +1,7 @@
 "use strict";
 
+const { getPageNumOffset } = require("../utils/misc");
+
 const errors = require(baseDir + "/utils/error");
 const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
@@ -7,26 +9,11 @@ const mysql = db.mysql;
 const queryDb = db.queryDb;
 
 const {updateRank, calculateRank} = require(baseDir + "/utils/updateRanking");
-const {getPostData, getPostVoteDirection, getNumComments, Post} = require(baseDir + "/utils/post");
+const {getPostVoteDirection, getNumComments} = require(baseDir + "/utils/post");
 const {getUserSubscriptionStatus} = require(baseDir + "/utils/subreddit");
 const {getCommentData} = require(baseDir + "/utils/comment");
-const {isValidUrl, getHtml, getArticleTitle, getArticleImageSrc} = require(baseDir + "/utils/misc");
+const {isValidUrl, getHtml, getArticleTitle, getArticleImageSrc, parseTimeSinceCreation} = require(baseDir + "/utils/misc");
 
-
-const getPost = async function(req, res, next)
-{
-    const postData = await getPostData(req.session.userId, req.params.postId);
-    if(!postData)
-    {
-        res.status(404).send("Page not found.");
-        return;
-    }
-    
-    req.postObj = new Post(req.params.postId, postData.title, postData.postLink, postData.imgSrc, postData.content, postData.numVotes, 
-        postData.userId, postData.userName, postData.minutes_ago, await getPostVoteDirection(req.session.userID, req.params.postId), await getNumComments(req.params.postId));
-    // /        constructor(id, title, content, numVotes, userId, userName, pageNum)
-    next();
-}
 
 const createPostView = async function (req, res)
 {
@@ -40,10 +27,11 @@ const createPostView = async function (req, res)
         subreddit: req.subredditObj,
         post: req.postObj,
         comments: commentData,
-        username: req.session.loggedIn ? req.session.user : undefined,
+        user: req.user,
         filter: req.params.filter ? req.params.filter : "top",
         isSubscribed: (req.session.loggedIn && req.subredditObj) ? (await getUserSubscriptionStatus(req.session.userID, req.subredditObj.id)) : false
     }
+    console.log(req.user);
     res.render(baseDir + "/views/post", params);
 }
 
@@ -125,5 +113,93 @@ const voteOnPost = async function(req, res) {
     }
 }
 
+const searchForPosts = async function(req, res) {
 
-module.exports = {createPostView, createPost, voteOnPost, getPost};
+
+    let queryParams = [`%${req.body.searchQuery}%`];
+    let filterOptions = '';
+    if(req.body.filterBySubreddit)
+    {
+        filterOptions += ` AND subreddits.title = ?`;
+        queryParams.push(req.body.filterBySubreddit);
+    }
+    if(req.body.filterByAuthor)
+    {
+        filterOptions += ` AND userName = ?`;
+        queryParams.push(req.body.filterByAuthor);
+    }
+
+
+    let query = `SELECT POSTS.id, numVotes, posts.title AS title, content, imgSrc, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
+    WHERE posts.title LIKE ? 
+    ${filterOptions} 
+    ORDER BY SCORE DESC LIMIT ${POSTS_PER_PAGE} OFFSET 0`;
+
+    let posts = await queryDb(query, queryParams);
+    
+    for (let post of posts)
+    {
+        post.numComments = await getNumComments(post.id);
+        post.voteDirection = await getPostVoteDirection(req.session.userID, post.id);
+        post.timeSinceCreation = parseTimeSinceCreation(post.minutes_ago);
+    }
+
+    let params = {
+        pageNum: 1,
+        posts: posts,
+        user: req.user,
+        searchQuery: req.body.searchQuery,
+        filterBySubreddit: req.body.filterBySubreddit,
+        filterByAuthor: req.body.filterByAuthor
+    }
+
+
+    res.render("searchResults", params)
+}
+
+const loadMoreSearchResults = async function(req, res)
+{
+
+    req.pageNum += 1;
+    let queryParams = [`%${req.body.searchQuery}%`];
+    let filterOptions = '';
+    if(req.body.filterBySubreddit)
+    {
+        filterOptions += ` AND subreddits.title = ?`;
+        queryParams.push(req.body.filterBySubreddit);
+    }
+    if(req.body.filterByAuthor)
+    {
+        filterOptions += ` AND userName = ?`;
+        queryParams.push(req.body.filterByAuthor);
+    }
+
+    queryParams.push(getPageNumOffset(req.pageNum));
+
+    let query = `SELECT POSTS.id, numVotes, posts.title AS title, content, imgSrc, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
+    WHERE posts.title LIKE ? 
+    ${filterOptions} 
+    ORDER BY SCORE DESC LIMIT ${POSTS_PER_PAGE} OFFSET ?`;
+
+    let posts = await queryDb(query, queryParams);
+    
+    for (let post of posts)
+    {
+        post.numComments = await getNumComments(post.id);
+        post.voteDirection = await getPostVoteDirection(req.session.userID, post.id);
+        post.timeSinceCreation = parseTimeSinceCreation(post.minutes_ago);
+    }
+
+    let params = {
+        pageNum: req.pageNum,
+        posts: posts
+    }
+    res.render("searchResultsPostList", params);
+
+}
+
+module.exports = {createPostView, createPost, voteOnPost, searchForPosts, loadMoreSearchResults};

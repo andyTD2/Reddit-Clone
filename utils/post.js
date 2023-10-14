@@ -59,5 +59,17 @@ const getPostVoteDirection = async function(userId, postId)
 };
 
 
+const searchPosts = async function(req, res) {
+    let result = await queryDb(`SELECT POSTS.id, numVotes, posts.title AS title, content, imgSrc, link as postLink, created_at, subreddit_id, subreddits.title AS subredditName, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM POSTS 
+    LEFT JOIN users ON posts.user_id = users.id
+    LEFT JOIN subreddits on posts.subreddit_id = subreddits.id
+    WHERE posts.title LIKE ?
+    ORDER BY SCORE DESC LIMIT ${POSTS_PER_PAGE} OFFSET ?`,
+    [req.body.query, pageNum]);
+    
+    return result;
+}
 
-module.exports = {getPostData, getPostVoteDirection, getNumComments, Post};
+
+
+module.exports = {getPostData, getPostVoteDirection, getNumComments, searchPosts, Post};

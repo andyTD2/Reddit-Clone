@@ -39,7 +39,7 @@
                     <div id="editor" name="sidebar">
                     </div>
                     <div id="createSubredditError" class="errMsg"></div>
-                    <input type="submit" id="createSubredditSubmit" value="Submit">
+                    <input type="submit" id="createSubredditSubmit" class="formSubmit" value="Submit">
                 </form>
 			</div>
 		</div>
@@ -87,7 +87,7 @@
             $("#subredditDescription").text($("#description").val());
         })
     </script>
-	<% if (!locals.username) { %>
+	<% if (!locals.user) { %>
 	<script type="text/javascript" src="/scripts/loginModal.js"></script>
 	<% } %>
 </html>

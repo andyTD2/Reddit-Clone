@@ -8,41 +8,7 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const {getPosts, getSubredditData, getSubredditView, getNextPage} = require(baseDir + "/utils/subreddit");
-const Subreddit = require(baseDir + "/utils/subreddit").Subreddit;
-
-
-///////////////////////////////////
-///////// MIDDLEWARES /////////////
-///////////////////////////////////
-
-const getSubreddit = async function(req, res, next) {
-    req.subreddit = req.params.subreddit;
-
-    const result = await getSubredditData(req.subreddit);
-    if(result)
-    {
-        req.subredditObj = new Subreddit(result.id, result.title, result.description, result.sidebar);
-        next();
-    }
-    else
-    {
-        res.status(404).send("Page not found");
-    }
-}
-
-
-const getPageNum = function(req, res, next) {
-    console.log("page num");
-    req.pageNum = req.params.pageNum || 1;
-    next();
-}
-
-//////////////////////////////////////
-/////////// ROUTES ///////////////////
-//////////////////////////////////////
-
-
+const {loadSubredditData, getSubredditView, getNextPage} = require(baseDir + "/utils/subreddit");
 
 
 const createSubreddit = async function(req, res) {
@@ -62,7 +28,7 @@ const createSubreddit = async function(req, res) {
         res.status(400).send("Subreddit name may only consist of letters and numbers.");
         return;
     }
-    if(await getSubredditData(req.body.subredditName))
+    if(await loadSubredditData(req.body.subredditName))
     {
         res.status(400).send("This subreddit name has already been taken.");
         return;
@@ -76,13 +42,11 @@ const createSubreddit = async function(req, res) {
 
 
 const renderFrontPage = async function(req, res) {
-    console.log("rendering frontpage");
     let params = await getSubredditView(req);
     res.render("frontpage", params);
 }
 
 const renderSubreddit = async function(req, res) {
-    console.log("rendering subrreddit")
     let params = await getSubredditView(req);
     res.render("subreddit", params);
 }
@@ -96,4 +60,4 @@ const renderNextPage = async function(req, res) {
 }
 
 
-module.exports = {createSubreddit, getSubreddit, getPageNum, renderFrontPage, renderSubreddit, renderNextPage};
+module.exports = {createSubreddit, renderFrontPage, renderSubreddit, renderNextPage};

@@ -8,7 +8,6 @@ const mysql = db.mysql;
 const queryDb = db.queryDb;
 const { getPostVoteDirection, getNumComments } = require(baseDir + "/utils/post");
 const {parseTimeSinceCreation, getPageNumOffset} = require(baseDir + "/utils/misc");
-global.POSTS_PER_PAGE = 20;
 
 const filters = {
 
@@ -29,9 +28,6 @@ class Subreddit {
 
 }
 
-const loadSubreddit = function(queryResult) {
-    return new Subreddit(queryResult.id, queryResult.title);
-}
 
 const getFilter = function(filter)
 {
@@ -78,7 +74,7 @@ const getPosts = async function(params) {
     return posts;
 };
 
-const getSubredditData = async function(subredditName) {
+const loadSubredditData = async function(subredditName) {
     let result = await queryDb("SELECT * FROM subreddits WHERE title = ?", [subredditName]);
 
     if (result.length === 0)
@@ -100,7 +96,7 @@ const getSubredditView = async function(req) {
         pageNum: req.pageNum,
         posts: await getPosts({filter: req.params.filter, pageNum: req.pageNum, subreddit: req.subredditObj, userID: req.session.userID}),
         filter: req.params.filter || "hot",
-        username: req.session.loggedIn ? req.session.user : undefined,
+        user: req.user, 
         isSubscribed: (req.session.loggedIn && req.subredditObj) ? (await getUserSubscriptionStatus(req.session.userID, req.subredditObj.id)) : false
     }
 
@@ -120,4 +116,4 @@ const getNextPage = async function(req) {
 }
 
 
-module.exports = {getPosts, getSubredditData, loadSubreddit, getSubredditView, getNextPage, getUserSubscriptionStatus, Subreddit};
+module.exports = {getPosts, loadSubredditData, getSubredditView, getNextPage, getUserSubscriptionStatus, Subreddit};

@@ -14,7 +14,7 @@
 		<div class="container">
 		
 			<div class="header">
-				<div class="topbar"> topbar </div>
+				<%- include('partials/topbar') %>
 				<div class="headerControls">
 					<a href="/all" class="subName">FRONTPAGE</a>
 					<div class="filters">
@@ -37,6 +37,7 @@
 			<div class="feed">
 				<div class="sidebar">
 					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
+					<%- include('partials/searchbar') %>
 				</div>
 				<div class="contentFeed posts" data-filter="<%= filter %>">
 					<% posts.forEach((post) => { %>
@@ -85,7 +86,7 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
-	<% if (locals.username) { %>
+	<% if (locals.user) { %>
 	<script type = "text/javascript" src="/scripts/vote.js"></script>
 	<% } else { %>
 	<script type="text/javascript" src="/scripts/loginModal.js"></script>

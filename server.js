@@ -1,6 +1,7 @@
 global.baseDir = __dirname;
 const config = require(baseDir + '/config/config.json');
 global.baseURL = config.baseURL;
+global.POSTS_PER_PAGE = parseInt(config.postPerPage);
 
 const http = require("http");
 const hostname = config.hostname;

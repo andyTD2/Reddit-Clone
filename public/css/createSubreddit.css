@@ -27,7 +27,7 @@
     color: red;
 }
 
-#createSubredditSubmit
+.formSubmit
 {
     background-color: var(--alt-bg-color-two);
     border-style: none;
@@ -35,7 +35,7 @@
     width: 75px;
 }
 
-#createSubredditSubmit:active
+.formSubmit:active
 {
     background-color: var(--alt-bg-color);
     border-style: none;

@@ -17,7 +17,7 @@
 			<div class="header">
 				<div class="topbar"> topbar </div>
 				<div class="headerControls">
-					<a href="/u/<%= username %>" class="profileName">u/<%= profileName %></a>
+					<a href="/u/<%= profileName %>" class="profileName">u/<%= profileName %></a>
 					<%- include('partials/accountControls') %>
 				</div>
 			</div>
@@ -102,7 +102,7 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
-	<% if (locals.username) { %>
+	<% if (locals.user) { %>
 		<script type = "text/javascript" src="/scripts/vote.js"></script>
 	<% } else { %>
 		<script type="text/javascript" src="/scripts/loginModal.js"></script>

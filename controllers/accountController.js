@@ -49,7 +49,6 @@ const getUser = async function(req, res, next) {
 
     req.user = new User(req.session.userID, req.session.user);
     await req.user.getSubscribedSubreddits();
-    console.log("user: ", req.user);
     next();
 }
 
@@ -124,11 +123,10 @@ const getProfilePage = async function(req, res)
 
     let userActivity = await getRecentUserActivity(result[0].id, POSTS_PER_PAGE, 0);
 
-    console.log(userActivity);
     let params = {
         pageNum: 1,
         activities: userActivity,
-        username: req.session.loggedIn ? req.session.user : undefined,
+        user: req.user,
         profileName: req.params.username
     }
 

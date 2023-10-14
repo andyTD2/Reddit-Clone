@@ -82,6 +82,16 @@ body {
     opacity: 0.95;
     padding-left: 5px;
 }
+
+#topbarListOfSubreddits {
+  display: flex;
+  flex-direction: row;
+}
+
+.subscribedSub {
+  margin-left: 5px;
+}
+
 .accountControls{
     background-color: rgb(46, 46, 46);
     padding: 3px 3px;

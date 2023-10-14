@@ -7,47 +7,44 @@
         <TITLE> all subreddits</TITLE>
     <link rel="stylesheet" href="/css/styles.css">
 	<link rel="stylesheet" href="/css/subreddit.css">
+    <link rel="stylesheet" href="/css/searchResults.css">
     </head>
     <body>
-
 		<%- include('partials/loginModal') %>
 		<%- include('partials/signupModal') %>
 		<div class="container">
 		
 			<div class="header">
-				<div class="topbar"> topbar </div>
+				<%- include('partials/topbar') %>
 				<div class="headerControls">
-					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
-					<div class="filters">
-						<% if (filter == "hot") { %>
-							<a href="/r/<%= subreddit.name %>/hot" class="currentFilter">hot</a>
-						<% } else { %> <a href="/r/<%= subreddit.name %>/hot">hot</a> <% } %>
-
-						<% if (filter == "top") { %>
-							<a href="/r/<%= subreddit.name %>/top" class="currentFilter">top</a>
-						<% } else { %> <a href="/r/<%= subreddit.name %>/top">top</a> <% } %>
-
-						<% if (filter == "new") { %>
-							<a href="/r/<%= subreddit.name %>/new" class="currentFilter">new</a>
-						<% } else { %> <a href="/r/<%= subreddit.name %>/new">new</a> <% } %>
-					</div>
 					<%- include('partials/accountControls') %>
 				</div>
 			</div>
 			
 			<div class="feed">
 				<div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
-					<% if (isSubscribed) { console.log(`subbed: ${isSubscribed}`) %>
-					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
-					<% } else { %>
-					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Subscribe</a>
-					<% } %>
-					<div id="subredditDescription"><%= subreddit.description %></div>
-					<div id="subredditSidebar"><%- subreddit.sidebar %></div>
+					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
 				</div>
-				<div class="posts contentFeed" data-filter="<%= filter %>">
+                <div class="test">
+					<div id="searchbar">
+						<form action="/search" method="POST" id="searchFormExtended">
+							<label for="searchQuery">Search</label>
+							<input type="text" class="smallInputBox inputBox" id="searchQuery" name="searchQuery" placeholder="<%= searchQuery %>">
+							<div id="searchFilters">
+								<div id="subredditFilter">
+									<label for="filterBySubreddit">Filter results by subreddit</label>
+									<input type="text" class="verySmallInputBox inputBox" id="filterBySubreddit" name="filterBySubreddit" placeholder="<%= filterBySubreddit %>">
+								</div>
+								<div id="authorFilter">
+									<label for="filterByAuthor">Filter results by author</label>
+									<input type="text" class="verySmallInputBox inputBox" id="filterByAuthor" name="filterByAuthor" placeholder="<%= filterByAuthor %>">
+								</div>
+							</div>
+							<input type="submit" value="submit" id="searchSubmit" class="formSubmit">
+						</form>
+					</div>					
+                </div>
+				<div class="contentFeed posts">
 					<% posts.forEach((post) => { %>
 						<div class="post">
 							<div class="vote" data-postId="<%= post.id %>">
@@ -60,7 +57,7 @@
 								<div class="voteCount">
 									<%= post.numVotes %>
 								</div>
-
+								<% console.log(post.voteDirection); %>
 								<% if (post.voteDirection == -1) { %>
 									<img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
 								<% } else { %>
@@ -76,10 +73,10 @@
 								<% if (post.postLink != "") { %>
 								<a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
 								<% } else { %>
-								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
 								<% } %>
-								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
-								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
+								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %> to <%= post.subredditName %></div>
+								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>
 						</div>
 					<% }) %>
@@ -95,16 +92,19 @@
 		crossorigin="anonymous">
 	</script>
 	<% if (locals.user) { %>
-		<script type = "text/javascript" src="/scripts/vote.js"></script>
+	<script type = "text/javascript" src="/scripts/vote.js"></script>
 	<% } else { %>
-		<script type="text/javascript" src="/scripts/loginModal.js"></script>
-		<script type="text/javascript" src="/scripts/signupModal.js"></script>
+	<script type="text/javascript" src="/scripts/loginModal.js"></script>
+	<script type="text/javascript" src="/scripts/signupModal.js"></script>
 	<% } %>
 	<script>
 		$(".posts").on("click.loadmore", ".pageNum", function() {
 			let pageNum = $(".pageNum").attr("data-pageNum");
 			let filter = $(".posts").attr("data-filter");
-			$.get(`/r/<%= subreddit.name %>/next/page=${pageNum}/${filter}`,
+			$.post(`/search/page=${pageNum}`,
+			{searchQuery: "<%= searchQuery %>",
+			filterByAuthor: "<%= filterByAuthor %>",
+			filterBySubreddit: "<%= filterBySubreddit %>"},
 			function(data, status)
 			{
 				$(".pageNum").remove();
@@ -112,6 +112,8 @@
 				insert.insertAdjacentHTML('beforeend', data);
 			});
 		})
+
+
+		var docWidth = document.documentElement.offsetWidth;
 	</script>
-	<%- include('ejs_scripts/test') %>
 </html>

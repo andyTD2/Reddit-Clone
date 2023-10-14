@@ -3,10 +3,6 @@ const express = require('express');
 const router = express.Router();
 const User = require(baseDir + "/controllers/accountController");
 
-router.use(function(req, res, next) {
-    console.log("ACCOUNT CONTROLS MIDDLEWARE");
-    next();
-})
 
 router.get("/userLogout", User.logOut);
 
