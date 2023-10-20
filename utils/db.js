@@ -18,7 +18,6 @@ if (!newPool)
 const queryDb = async function(sql, params)
 {
     let query = db.format(sql, params);
-    console.log(query);
     let result = await newPool.query(query);
     return result[0];
 }

@@ -18,6 +18,14 @@ const getPageNumOffset = function(pageNum)
     return (page - 1) * POSTS_PER_PAGE;
 }
 
+const getCommentPageNumOffset = function(pageNum)
+{
+    let page = parseInt(pageNum);
+    if(!page) throw new Error("Invalid pageNum");
+
+    return (page - 1) * COMMENTS_PER_PAGE;
+};
+
 const isValidUrl = function(url)
 {
     try {
@@ -52,5 +60,5 @@ const getArticleImageSrc = function(dom)
     return dom.window.document.querySelector("meta[property='og:image']").getAttribute("content");
 }
 
-module.exports = { parseTimeSinceCreation, getPageNumOffset, isValidUrl, getHtml, getArticleTitle, getArticleImageSrc
+module.exports = { parseTimeSinceCreation, getPageNumOffset, isValidUrl, getHtml, getArticleTitle, getArticleImageSrc, getCommentPageNumOffset
 };

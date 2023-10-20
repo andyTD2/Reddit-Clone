@@ -4,7 +4,6 @@ const db = require(baseDir + "/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
-const MAX_COMMENTS_PER_PAGE = 5;
 
 const commentFilters = {
     new: `SELECT COMMENTS.id, numVotes, content, created_at, user_id, post_id, userName, TIMESTAMPDIFF(MINUTE, created_at, CURRENT_TIMESTAMP()) AS minutes_ago FROM COMMENTS 
@@ -60,7 +59,7 @@ const getCommentData = async function(req)
         return undefined;
     }
 
-    let result = await queryDb(query, [req.params.postId, MAX_COMMENTS_PER_PAGE, (req.params.pageNum-1) * MAX_COMMENTS_PER_PAGE]);
+    let result = await queryDb(query, [req.params.postId, COMMENTS_PER_PAGE, (req.params.pageNum-1) * COMMENTS_PER_PAGE]);
 
     await getChildrenOfComment(result, req.params.postId, req.session.userID);
     return result;

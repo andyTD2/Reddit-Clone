@@ -12,7 +12,6 @@
     </head>
     <body>
 		<% timeSinceCreation = function(timeInMinutes) { %>
-			<% console.log(timeInMinutes); %>
 			<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
 			<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
 			<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
@@ -37,7 +36,7 @@
 				<div class="sidebar">
 					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
 					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal" id="createPostLink"> Create Post</a>
-					<% if (isSubscribed) { console.log(`subbed: ${isSubscribed}`) %>
+					<% if (isSubscribed) { %>
 					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
 					<% } else { %>
 					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Subscribe</a>
@@ -103,12 +102,12 @@
 						</div>
 						<% function displayComment(comment, evens) { %>
 							<% if (evens) { %>
-								<div class="commentBox even" data-commentId="<%= comment.id %>">
+								<div class="commentBox even">
 							<% } else { %>
-								<div class="commentBox odd" data-commentId="<%= comment.id %>">
+								<div class="commentBox odd">
 							<% } %>
 									<div class="comment">
-										<div class="vote">
+										<div class="vote" data-commentId="<%= comment.id %>">
 											<% if (comment.voteDirection == 1) { %>
 												<img src="/images/up-arrow-green.png" class="upvote openLoginModal">
 											<%  } else {  %>
@@ -144,7 +143,7 @@
 						<% comments.forEach((comment) => { %>
 							<% displayComment(comment, true); %>
 						<% }) %>
-						<div class="pageNum" data-pageNum="<%= post.pageNum %>">LOAD MORE</div>
+						<div class="pageNum" data-pageNum="1">LOAD MORE</div>
 					</div>
 				</div>
 			</div>
@@ -225,7 +224,6 @@
 
 		function postReply(btn)
 		{
-			console.log("from ejs <%= post.id %>");
 			$.post(
 				"/r/<%= subreddit.name %>/post/<%= post.id %>/newComment",
 				{
@@ -248,7 +246,6 @@
 				$(".pageNum").remove();
 				const insert = document.getElementsByClassName("comments")[0];
 				insert.insertAdjacentHTML('beforeend', data);
-				console.log(data);
 			});
 		})
 		</script>

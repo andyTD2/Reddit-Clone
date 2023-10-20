@@ -1,20 +1,23 @@
 "use strict";
 const express = require('express');
 const router = express.Router();
-const User = require(baseDir + "/controllers/accountController");
+const userController = require(baseDir + "/src/User/user-controller");
+const { getPageNum } = require(baseDir + "/middlewares/misc");
 
 
-router.get("/userLogout", User.logOut);
+router.get('/userLogout', userController.handleLogOutRequest);
 
-router.post('/userLogin', User.authenticateUser);
+router.post('/userLogin', userController.handleAuthRequest);
 
-router.post('/changeSubscription', User.changeUserSubscription);
+router.post('/changeSubscription', userController.handleSubscriptionChangeRequest);
 
-router.post('/createUser', User.createUser);
+router.post('/createUser', userController.handleNewUserRequest);
 
-router.get("/u/:username", User.getProfilePage);
+router.use("/u/:profileName", getPageNum);
+router.get("/u/:profileName", userController.handleProfilePageRequest);
 
-router.get("/u/:username/next/page=:pageNum", User.getNextProfilePage);
+router.use("/u/:profileName/next/page=:pageNum", getPageNum);
+router.get("/u/:profileName/next/page=:pageNum", userController.handleNextProfilePageRequest);
 
 
 module.exports = router;

@@ -1,25 +1,32 @@
 "use strict";
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const postController = require(baseDir + "/controllers/postController");
-const commentController = require(baseDir + "/controllers/commentController")
-const {getPost} = require(baseDir + "/middlewares/post");
+const { getPageNum } = require(baseDir + "/middlewares/misc");
+const postController = require(baseDir + "/src/Post/post-controller");
+const postMiddlewares = require(baseDir + "/src/Post/post-middleware");
+const subredditMiddlewares = require(baseDir + "/src/Subreddit/subreddit-middleware");
 
+const commentController = require(baseDir + "/src/Comment/comment-controller")
+
+router.use("/newPost", subredditMiddlewares.getSubredditData);
 router.get("/newPost", async function(req, res) {
-    res.render("createPost", {user: req.user, subreddit: req.subredditObj})
+    res.render("createPost", {user: req.user, subreddit: req.subredditData})
 });
 
-router.post("/newPost", postController.createPost);
-
-router.use("/:postId/", getPost);
-
-router.get("/:postId/:filter?", postController.createPostView);
+router.use("/newPost", subredditMiddlewares.getSubredditData);
+router.post("/newPost", postController.handleNewPostRequest);
 
 
-router.post("/:postId/newComment", commentController.createComment);
+router.use("/:postId/", subredditMiddlewares.getSubredditData);
+router.use("/:postId/", postMiddlewares.getPost);
+router.get("/:postId/:filter?", postController.handlePostPageRequest);
 
+router.use("/:postId/newComment", subredditMiddlewares.getSubredditData);
+router.post("/:postId/newComment", commentController.handleNewCommentRequest);
 
-router.get("/:postId/page=:pageNum/:filter?", commentController.loadMoreComments);
+router.use("/:postId/page=:pageNum/:filter?", subredditMiddlewares.getSubredditData);
+router.use("/:postId/page=:pageNum/:filter?", getPageNum);
+router.get("/:postId/page=:pageNum/:filter?", commentController.handleLoadCommentsRequest);
 
 
 module.exports = router;

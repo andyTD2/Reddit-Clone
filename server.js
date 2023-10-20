@@ -1,7 +1,8 @@
 global.baseDir = __dirname;
 const config = require(baseDir + '/config/config.json');
 global.baseURL = config.baseURL;
-global.POSTS_PER_PAGE = parseInt(config.postPerPage);
+global.POSTS_PER_PAGE = parseInt(config.postsPerPage);
+global.COMMENTS_PER_PAGE = parseInt(config.commentsPerPage);
 
 const http = require("http");
 const hostname = config.hostname;
@@ -54,7 +55,7 @@ app.set('view engine', 'ejs');
 
 const accountControlRoutes = require('./routes/accountControls/accountControlRoutes');
 const subredditControlRoutes = require('./routes/subreddits/subredditRoutes');
-app.use("/", require( baseDir + "/controllers/accountController").getUser);
+app.use("/", require( baseDir + "/src/User/user-middlewares").getUser);
 app.use("/", accountControlRoutes);
 app.use("/", subredditControlRoutes);
 

@@ -36,7 +36,6 @@ const calculateRank = function(voteSum, dateCreated)
     }
 
     let seconds = getEpochDiff(dateCreated) - DEPLOY_DATE_TIMESTAMP_SECONDS;
-    console.log(seconds);
     return (sign * order + seconds / 45000).toFixed(7);
 }
 
@@ -45,7 +44,6 @@ const updateRank = async function(postId)
     let result = await queryDb("SELECT UNIX_TIMESTAMP(created_at) as created_at, numVotes FROM posts WHERE id = ?", [postId]);
     let newRank = calculateRank(result[0].numVotes, new Date(result[0].created_at * 1000));
     await queryDb("UPDATE posts SET score = ? WHERE id = ?", [newRank, postId]);
-    console.log(`Set rank to: ${newRank}`);
 }
 
 module.exports = {updateRank, calculateRank};

@@ -7,22 +7,6 @@ const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const bcrypt = require("bcrypt");
-
-
-/*  
-    THIS FILE CONTAINS THE USER CLASS AND RELATED UTILITY FUNCTIONS
-    - user authentication, login/logout
-    - user creation
-    - retrieving user data
-*/
-
-const logIn = function(username, id, req) {
-    req.session.user = username;
-    req.session.userID = id;
-    req.session.loggedIn = true;
-}
-
 class User {
     constructor(id, username)
     {
@@ -40,4 +24,4 @@ class User {
 
 
 
-module.exports = {logIn, User};
+module.exports = {User};

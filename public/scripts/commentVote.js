@@ -1,6 +1,6 @@
 function sendCommentVote(thisObj, voteDirection)
 {
-    let commentId = thisObj.parent().parent().parent().attr("data-commentId");
+    let commentId = thisObj.parent().attr("data-commentId");
     $.post(
         `/voteComment/${commentId}`,
         {

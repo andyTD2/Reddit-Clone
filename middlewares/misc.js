@@ -13,5 +13,10 @@ const getPageNum = function(req, res, next) {
     next();
 };
 
+const getFilter = function(req, res, next) {
+    req.filter = req.params.filter || "hot";
+    next();
+}
 
-module.exports = { getPageNum };
+
+module.exports = { getPageNum, getFilter };

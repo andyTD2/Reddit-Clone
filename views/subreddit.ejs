@@ -39,7 +39,7 @@
 				<div class="sidebar">
 					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
 					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
-					<% if (isSubscribed) { console.log(`subbed: ${isSubscribed}`) %>
+					<% if (isSubscribed) { %>
 					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
 					<% } else { %>
 					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Subscribe</a>
