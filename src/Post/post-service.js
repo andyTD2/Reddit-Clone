@@ -3,7 +3,7 @@
 const commentService = require(baseDir + "/src/Comment/comment-service");
 const userModel = require(baseDir + "/src/User/user-model");
 const postModel = require(baseDir + "/src/Post/post-model");
-const { isValidUrl, getHtml, getArticleImageSrc, getArticleTitle } = require(baseDir + "/utils/misc");
+const { isValidUrl, getHtml, getArticleImageSrc, getArticleTitle } = require(baseDir + "/src/utils/misc");
 
 const getPostPage = async function (userId, postId, pageNum, filter, subredditData, postData, user)
 {

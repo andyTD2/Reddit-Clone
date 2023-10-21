@@ -1,5 +1,5 @@
 const postModel = require(baseDir + "/src/Post/post-model");
-const {parseTimeSinceCreation} = require(baseDir + "/utils/misc");
+const {parseTimeSinceCreation} = require(baseDir + "/src/utils/misc");
 
 const getPost = async function(req, res, next)
 {

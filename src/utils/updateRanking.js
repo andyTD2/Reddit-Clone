@@ -1,7 +1,7 @@
 "use strict"
 
-const errors = require(baseDir + "/utils/error");
-const db = require(baseDir + "/utils/db");
+const errors = require(baseDir + "/src/utils/error");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
@@ -15,7 +15,6 @@ function getEpochDiff(dateSinceEpochStart)
 {
     return Math.abs(dateSinceEpochStart - EPOCH) / 1000;
 }
-
 
 const calculateRank = function(voteSum, dateCreated) 
 {
@@ -38,12 +37,4 @@ const calculateRank = function(voteSum, dateCreated)
     let seconds = getEpochDiff(dateCreated) - DEPLOY_DATE_TIMESTAMP_SECONDS;
     return (sign * order + seconds / 45000).toFixed(7);
 }
-
-const updateRank = async function(postId)
-{
-    let result = await queryDb("SELECT UNIX_TIMESTAMP(created_at) as created_at, numVotes FROM posts WHERE id = ?", [postId]);
-    let newRank = calculateRank(result[0].numVotes, new Date(result[0].created_at * 1000));
-    await queryDb("UPDATE posts SET score = ? WHERE id = ?", [newRank, postId]);
-}
-
-module.exports = {updateRank, calculateRank};
+module.exports = {calculateRank};

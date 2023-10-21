@@ -1,13 +1,12 @@
-const db = require(baseDir + "/utils/db");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-
-const {getNumComments, getPostVoteDirection} = require(baseDir + "/utils/post");
-const {parseTimeSinceCreation} = require(baseDir + "/utils/misc");
-const {getCommentVoteDirection} = require(baseDir + "/utils/comment");
-const {getPageNumOffset} = require(baseDir + "/utils/misc");
+const {parseTimeSinceCreation} = require(baseDir + "/src/utils/misc");
+const {getPageNumOffset} = require(baseDir + "/src/utils/misc");
+const commentModel = require(baseDir + "/src/Comment/comment-model");
+const postModel = require(baseDir + "/src/Post/post-model");
 
 
 const findUser = async function(username)
@@ -32,6 +31,11 @@ const unsubscribeToSubreddit = async function(userId, subId)
 {
     await queryDb("DELETE FROM subredditSubscriptions WHERE user_id = ? AND subreddit_id = ?", [userId, subId]);
     return;
+}
+
+const getSubscribedSubreddits = async function(userId)
+{
+    return (await queryDb("SELECT subreddit_id as subredditId, title FROM subredditSubscriptions LEFT JOIN subreddits ON subreddit_id = subreddits.id WHERE user_id = ?", [userId]));
 }
 
 const getUserDataByName = async function(username)
@@ -77,8 +81,8 @@ const getRecentUserActivity = async function(profileId, userId, limit, pageNum)
                                 [recentActivityIds[i].postId]))[0];
 
 
-            recentActivityIds[i].numComments = await getNumComments(recentActivityIds[i].postId);
-            recentActivityIds[i].voteDirection = await getPostVoteDirection(userId, recentActivityIds[i].postId);
+            recentActivityIds[i].numComments = await postModel.getNumComments(recentActivityIds[i].postId);
+            recentActivityIds[i].voteDirection = await postModel.getPostVoteDirection(userId, recentActivityIds[i].postId);
             recentActivityIds[i].timeSinceCreation = parseTimeSinceCreation(recentActivityIds[i].minutes_ago);
         }
         else
@@ -94,10 +98,10 @@ const getRecentUserActivity = async function(profileId, userId, limit, pageNum)
                                 WHERE comments.id = ?`,
                                 [recentActivityIds[i].commentId]))[0];
 
-            recentActivityIds[i].commentVoteDirection = await getCommentVoteDirection(userId, recentActivityIds[i].commentId);
+            recentActivityIds[i].commentVoteDirection = await commentModel.getCommentVoteDirection(userId, recentActivityIds[i].commentId);
             recentActivityIds[i].timeSincePostCreation = parseTimeSinceCreation(recentActivityIds[i].minutes_ago_post);
             recentActivityIds[i].timeSinceCommentCreation = parseTimeSinceCreation(recentActivityIds[i].minutes_ago);
-            recentActivityIds[i].postVoteDirection = await getPostVoteDirection(userId, recentActivityIds[i].postId);
+            recentActivityIds[i].postVoteDirection = await postModel.getPostVoteDirection(userId, recentActivityIds[i].postId);
         }
     }
 
@@ -107,4 +111,4 @@ const getRecentUserActivity = async function(profileId, userId, limit, pageNum)
 
 
 
-module.exports = {findUser, getUserSubscriptionStatus, subscribeToSubreddit, unsubscribeToSubreddit, getUserDataByName, insertUser, getRecentUserActivity};
+module.exports = {findUser, getUserSubscriptionStatus, subscribeToSubreddit, unsubscribeToSubreddit, getUserDataByName, insertUser, getRecentUserActivity, getSubscribedSubreddits};

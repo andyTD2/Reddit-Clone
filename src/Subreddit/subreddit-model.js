@@ -1,15 +1,15 @@
 "use strict";
 require("express-async-errors")
-const errors = require(baseDir + "/utils/error")
+const errors = require(baseDir + "/src/utils/error")
 
-const db = require(baseDir + "/utils/db");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const {getPageNumOffset} = require(baseDir + "/utils/misc");
-const {getNumComments, getPostVoteDirection} = require(baseDir + "/utils/post");
-const {parseTimeSinceCreation} = require(baseDir + "/utils/misc");
+const {getPageNumOffset} = require(baseDir + "/src/utils/misc");
+const {parseTimeSinceCreation} = require(baseDir + "/src/utils/misc");
+const postModel = require(baseDir + "/src/Post/post-model");
 
 const loadSubredditData = async function(subredditName) {
     let result = await queryDb("SELECT * FROM subreddits WHERE title = ?", [subredditName]);
@@ -48,8 +48,8 @@ const getSubredditPosts = async function(params) {
     let posts = (await dbCon.query(query))[0];
     for (let post of posts)
     {
-        post.numComments = await getNumComments(post.id);
-        post.voteDirection = await getPostVoteDirection(params.userID, post.id);
+        post.numComments = await postModel.getNumComments(post.id);
+        post.voteDirection = await postModel.getPostVoteDirection(params.userID, post.id);
         post.timeSinceCreation = parseTimeSinceCreation(post.minutes_ago);
     }
 

@@ -1,10 +1,9 @@
 "use strict";
-const errors = require(baseDir + "/utils/error");
-const db = require(baseDir + "/utils/db");
+const errors = require(baseDir + "/src/utils/error");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
-const {getCommentData} = require(baseDir + "/utils/comment");
 const commentService = require(baseDir + "/src/Comment/comment-service");
 const commentModel = require(baseDir + "/src/Comment/comment-model")
 

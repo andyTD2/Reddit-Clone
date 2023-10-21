@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require(baseDir + "/src/User/user-controller");
-const { getPageNum } = require(baseDir + "/middlewares/misc");
+const { getPageNum } = require(baseDir + "/src/misc/middlewares/misc");
 
 
 router.get('/userLogout', userController.handleLogOutRequest);

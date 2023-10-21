@@ -1,7 +1,7 @@
 "use strict";
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const { getPageNum } = require(baseDir + "/middlewares/misc");
+const { getPageNum } = require(baseDir + "/src/misc/middlewares/misc");
 const postController = require(baseDir + "/src/Post/post-controller");
 const postMiddlewares = require(baseDir + "/src/Post/post-middleware");
 const subredditMiddlewares = require(baseDir + "/src/Subreddit/subreddit-middleware");

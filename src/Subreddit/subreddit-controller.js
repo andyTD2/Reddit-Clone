@@ -1,9 +1,9 @@
 "use strict";
 
 require("express-async-errors")
-const errors = require(baseDir + "/utils/error")
+const errors = require(baseDir + "/src/utils/error")
 
-const db = require(baseDir + "/utils/db");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;

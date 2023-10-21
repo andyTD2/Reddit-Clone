@@ -75,7 +75,6 @@
         })
 
         $(".ql-editor").on("input", function() {
-            console.log(quill.root.innerHTML);
             $("#subredditSidebar").html(quill.root.innerHTML.replaceAll(" ", "&nbsp;").replaceAll("\t", "&emsp;"));
         })
          

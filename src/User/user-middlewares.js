@@ -1,4 +1,4 @@
-const {User} = require(baseDir + "/utils/user");
+const userModel = require(baseDir + "/src/User/user-model");
 
 const getUser = async function(req, res, next) {
     if(!req.session.loggedIn)
@@ -7,8 +7,12 @@ const getUser = async function(req, res, next) {
         return;
     }
 
-    req.user = new User(req.session.userID, req.session.user);
-    await req.user.getSubscribedSubreddits();
+    req.user = {
+        id: req.session.userID,
+        username: req.session.user,
+        subscriptionsList: await userModel.getSubscribedSubreddits(req.session.userID)
+    };
+
     next();
 }
 

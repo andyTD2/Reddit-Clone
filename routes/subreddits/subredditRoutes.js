@@ -2,14 +2,14 @@
 const express = require('express');
 const router = express.Router();
 
-const db = require(baseDir + "/utils/db");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const posts = require(baseDir + "/routes/subreddits/postRoutes");
 const commentController = require(baseDir + "/src/Comment/comment-controller");
 const postController = require(baseDir + "/src/Post/post-controller");
 
-const { getPageNum, getFilter } = require(baseDir + "/middlewares/misc");
+const { getPageNum, getFilter } = require(baseDir + "/src/misc/middlewares/misc");
 
 const subredditMiddlewares = require(baseDir + "/src/Subreddit/subreddit-middleware");
 const subredditController = require(baseDir + "/src/Subreddit/subreddit-controller");

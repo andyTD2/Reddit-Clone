@@ -1,13 +1,13 @@
 "use strict";
-const errors = require(baseDir + "/utils/error");
+const errors = require(baseDir + "/src/utils/error");
 
-const db = require(baseDir + "/utils/db");
+const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
 
-const {calculateRank} = require(baseDir + "/utils/updateRanking");
-const {getPageNumOffset, parseTimeSinceCreation} = require(baseDir + "/utils/misc");
+const {calculateRank} = require(baseDir + "/src/utils/updateRanking");
+const {getPageNumOffset, parseTimeSinceCreation} = require(baseDir + "/src/utils/misc");
 
 
 const getNumComments = async function(postId)
@@ -117,4 +117,5 @@ const getPostsByUserQuery = async function(searchQuery, filterBySubreddit, filte
     return posts;
 }
 
-module.exports = { loadPostData, insertNewPost, insertPostVote, deletePostVote, updatePostVote, updateNumPostVotes, updatePostRank, getPostsByUserQuery, getPostVoteDirection };
+module.exports = { loadPostData, insertNewPost, insertPostVote, deletePostVote, updatePostVote, updateNumPostVotes, 
+            updatePostRank, getPostsByUserQuery, getPostVoteDirection, getNumComments };
