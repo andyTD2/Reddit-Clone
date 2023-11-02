@@ -25,17 +25,20 @@
 		<div class="container">
 		
 			<div class="header">
-				<div class="topbar"> topbar </div>
+				<%- include('partials/topbar') %>
 				<div class="headerControls">
 					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
-					<%- include('partials/accountControls') %>
+					<div id="topbarRight">
+						<%- include('partials/searchbar') %>
+						<%- include('partials/accountControls') %>
+					</div>
 				</div>
 			</div>
 			
 			<div class="feed">
 				<div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal" id="createPostLink"> Create Post</a>
+					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
+					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
 					<% if (isSubscribed) { %>
 					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
 					<% } else { %>

@@ -17,14 +17,18 @@
                 <img src="/images/down-arrow.png" class="downvote">
             <% } %>
         </div>
-        <img src = "/images/text-icon.png" class="postPreview"></img>
+        <% if (post.imgSrc == "") { %>
+            <img src="/images/text-icon.png" class="postPreview"></img>
+            <% } else { %>
+            <img src="<%= post.imgSrc %>" class="postPreview"></img>
+        <% } %>
         <div class="postRight">
             <% if (post.postLink != "NULL") { %>
             <a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
             <% } else { %>
             <a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
             <% } %>
-            <div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %> to <%= post.subredditName %></div>
+            <div class="postInfo">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a> to <a href="/r/<%= post.subredditName %>" class="smallLink"><%= post.subredditName %></a></div>
             <a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
         </div>
     </div>

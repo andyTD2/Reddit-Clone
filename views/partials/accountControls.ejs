@@ -1,6 +1,6 @@
 <% if (locals.user) { %>
     <div class="accountControls">
-        <a href=""><%= user.username %></a>
+        <a href="/u/<%= user.username %>"><%= user.username %></a>
         <a href="/userLogout">Log Out</a>
     </div>
 <% } else { %>

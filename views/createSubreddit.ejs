@@ -15,16 +15,19 @@
 		<div class="container">
 		
 			<div class="header">
-				<div class="topbar"> topbar </div>
+				<%- include('partials/topbar') %>
 				<div class="headerControls">
                     <div class="subName subredditNamePreview"></div>
-					<%- include('partials/accountControls') %>
+					<div id="topbarRight">
+						<%- include('partials/searchbar') %>
+						<%- include('partials/accountControls') %>
+					</div>
 				</div>
 			</div>
 			
 			<div class="feed">
                 <div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
+					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
 					<div id="subredditDescription">Preview the description here</div>
 					<div id="subredditSidebar">Preview the sidebar here</div>
 				</div>

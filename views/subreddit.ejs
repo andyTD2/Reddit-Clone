@@ -15,7 +15,7 @@
 		<div class="container">
 		
 			<div class="header">
-				<div class="topbar"> topbar </div>
+				<%- include('partials/topbar') %>
 				<div class="headerControls">
 					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
 					<div class="filters">
@@ -31,7 +31,10 @@
 							<a href="/r/<%= subreddit.name %>/new" class="currentFilter">new</a>
 						<% } else { %> <a href="/r/<%= subreddit.name %>/new">new</a> <% } %>
 					</div>
-					<%- include('partials/accountControls') %>
+					<div id="topbarRight">
+						<%- include('partials/searchbar') %>
+						<%- include('partials/accountControls') %>
+					</div>
 				</div>
 			</div>
 			
@@ -78,7 +81,7 @@
 								<% } else { %>
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
 								<% } %>
-								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
+								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a></div>
 								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>
 						</div>

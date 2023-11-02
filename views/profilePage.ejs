@@ -15,10 +15,13 @@
 		<div class="container">
 		
 			<div class="header">
-				<div class="topbar"> topbar </div>
+				<%- include('partials/topbar') %>
 				<div class="headerControls">
 					<a href="/u/<%= profileName %>" class="profileName">u/<%= profileName %></a>
-					<%- include('partials/accountControls') %>
+					<div id="topbarRight">
+						<%- include('partials/searchbar') %>
+						<%- include('partials/accountControls') %>
+					</div>
 				</div>
 			</div>
 			

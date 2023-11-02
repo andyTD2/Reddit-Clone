@@ -7,6 +7,7 @@ div {
 body {
     margin: 0px;
     overflow-x: hidden;
+    background-color: black;
 }
 
 .container {
@@ -20,11 +21,12 @@ body {
 .sidebar {
     float: right;
     width: 300px;
-    background-color: var(--alt-bg-color-dark);
+    background-color: var(--main-bg-color);
     min-height: 300px;
     padding: 10px; 
     display: flex;
     flex-direction: column;
+    margin-left: 5px;
 }
 
 .sidebarBtn {
@@ -48,7 +50,9 @@ body {
     flex-direction: column;
     grid-template-rows: min-content, auto;
     grid-column: 1 / -1;
-    background-color: rgb(91, 91, 91);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--alt-bg-color-two);
+    border-bottom-style: solid;
 }
 
 .headerControls{
@@ -58,7 +62,7 @@ body {
 
 .subName{
     align-self: flex-end;
-    padding-left: 30px;
+    padding-left: 10px;
     margin-right: 10px;
     text-decoration: none;
     color: var(--link-font-color);
@@ -71,12 +75,12 @@ body {
 
 .feed {
     grid-column: 1 / 2;
-    background-color: var(--main-bg-color);
+    background-color: black;
     overflow-wrap: break-word;
 }
 
 .topbar {
-    background-color: var(--alt-bg-color-light);
+    background-color: var(--main-bg-color);
     color: rgb(16, 16, 16);
     height: min-content;
     opacity: 0.95;
@@ -88,23 +92,53 @@ body {
   flex-direction: row;
 }
 
+#topbarListOfSubreddits p{
+  margin: 0;
+}
+
 .subscribedSub {
   margin-left: 5px;
+  color: white;
+  text-decoration: none;
+}
+
+.subscribedSub:hover {
+  text-decoration: underline;
+}
+
+#topbarRight {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: row;
+  margin-left: auto
+}
+
+.searchbar {
+  background-color: var(--alt-bg-color-three);
+}
+
+.searchBox {
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.searchSubmit {
+  width: 20px;
+  padding-bottom: 3px;
+  vertical-align: bottom;
 }
 
 .accountControls{
-    background-color: rgb(46, 46, 46);
-    padding: 3px 3px;
-    height:min-content;
-    align-self: flex-end;
-    margin-left: auto;
+  background-color: var(--alt-bg-color-three);
+  padding: 3px 3px;
+  margin-left: auto;
 }
 
 .accountControls a {
-    color: var(--link-font-color);
-    text-decoration: none;
-    padding-left: 5px;
-    padding-right: 5px;
+  color: var(--link-font-color);
+  text-decoration: none;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 .accountControls a:hover {
@@ -122,8 +156,8 @@ body {
   background-color: rgb(224, 224, 224);
   position: fixed;
   top: 0%;
-  left: 50%;
-  transform: translate(-50%, -100%);
+  left: 0%;
+  transform: translate(-50%, -300%);
   display: flex;
   flex-direction: column;
   visibility: hidden;
@@ -139,7 +173,9 @@ body {
   }
 
   .modalOpened {
-    transform: translate(-50%, 50%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     visibility: visible;
   }
 
@@ -244,4 +280,14 @@ body {
     border-width: 2px;
     border-color: var(--alt-bg-color-two);
     padding: 5px;
+}
+
+.smallLink{
+  color: rgb(143, 143, 143);
+  text-decoration: none;
+}
+
+.smallLink:hover {
+  color: var(--main-font-color);
+  text-decoration: underline;
 }

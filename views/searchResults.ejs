@@ -17,33 +17,35 @@
 			<div class="header">
 				<%- include('partials/topbar') %>
 				<div class="headerControls">
-					<%- include('partials/accountControls') %>
+					<div class="subName">results</div>
+					<div id="topbarRight">
+						<%- include('partials/searchbar') %>
+						<%- include('partials/accountControls') %>
+					</div>
 				</div>
 			</div>
 			
 			<div class="feed">
 				<div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal" id="createSubredditLink">Create Subreddit</a>
+					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
 				</div>
-                <div class="test">
-					<div id="searchbar">
-						<form action="/search" method="POST" id="searchFormExtended">
-							<label for="searchQuery">Search</label>
-							<input type="text" class="smallInputBox inputBox" id="searchQuery" name="searchQuery" placeholder="<%= searchQuery %>">
-							<div id="searchFilters">
-								<div id="subredditFilter">
-									<label for="filterBySubreddit">Filter results by subreddit</label>
-									<input type="text" class="verySmallInputBox inputBox" id="filterBySubreddit" name="filterBySubreddit" placeholder="<%= filterBySubreddit %>">
-								</div>
-								<div id="authorFilter">
-									<label for="filterByAuthor">Filter results by author</label>
-									<input type="text" class="verySmallInputBox inputBox" id="filterByAuthor" name="filterByAuthor" placeholder="<%= filterByAuthor %>">
-								</div>
+				<div id="searchbar">
+					<form action="/search" method="POST" id="searchFormExtended">
+						<label for="searchQuery">Search</label>
+						<input type="text" class="smallInputBox inputBox" id="searchQuery" name="searchQuery" placeholder="<%= searchQuery %>">
+						<div id="searchFilters">
+							<div id="subredditFilter">
+								<label for="filterBySubreddit">Filter results by subreddit</label>
+								<input type="text" class="verySmallInputBox inputBox" id="filterBySubreddit" name="filterBySubreddit" placeholder="<%= filterBySubreddit %>">
 							</div>
-							<input type="submit" value="submit" id="searchSubmit" class="formSubmit">
-						</form>
-					</div>					
-                </div>
+							<div id="authorFilter">
+								<label for="filterByAuthor">Filter results by author</label>
+								<input type="text" class="verySmallInputBox inputBox" id="filterByAuthor" name="filterByAuthor" placeholder="<%= filterByAuthor %>">
+							</div>
+						</div>
+						<input type="submit" value="submit" id="searchSubmit" class="formSubmit">
+					</form>
+				</div>					
 				<div class="contentFeed posts">
 					<% posts.forEach((post) => { %>
 						<div class="post">
@@ -74,7 +76,7 @@
 								<% } else { %>
 								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
 								<% } %>
-								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <%= post.userName %> to <%= post.subredditName %></div>
+								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a> to <a href="/r/<%= post.subredditName %>" class="smallLink"><%= post.subredditName %></a></div>
 								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
 							</div>
 						</div>
