@@ -33,5 +33,5 @@
     </div>
 <% }) %>
 <% if(posts.length > 0) { %>
-<div class="pageNum" data-pageNum="<%= pageNum %>"><p>LOAD MORE</p></div>
+    <a href="/search/page=<%= pageNum %>" class="pageNum">LOAD MORE</a>
 <% } %>

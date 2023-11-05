@@ -27,7 +27,7 @@ const voteOnComment = async function(userId, commentId, voteDirection) {
 };
 
 
-const getComments = async function(userId, postId, pageNum, filter)
+const getComments = async function(userId, postId, pageNum, filter, post, subreddit)
 {
     pageNum += 1;
     let listOfParentComments = await commentModel.getParentComments(postId, pageNum, filter);
@@ -35,7 +35,10 @@ const getComments = async function(userId, postId, pageNum, filter)
 
     let params = {
         comments: listOfParentComments,
-        pageNum: pageNum
+        pageNum: pageNum,
+        subreddit: subreddit,
+        post, post,
+        filter: filter
     };
 
     return {ok: true, params: params};

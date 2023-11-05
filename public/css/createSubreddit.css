@@ -72,6 +72,6 @@
     margin: 0;
 }
 
-.sidebar
-{
+#subredditName, #description {
+    margin-bottom: 20px;
 }

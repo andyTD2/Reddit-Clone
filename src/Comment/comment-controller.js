@@ -36,7 +36,7 @@ const handleNewCommentRequest = async function(req, res) {
 };
 
 const handleLoadCommentsRequest = async function(req, res) {
-    let commentData = await commentService.getComments(req.session.userID, req.params.postId, req.pageNum, req.params.filter);
+    let commentData = await commentService.getComments(req.session.userID, req.params.postId, req.pageNum, req.params.filter, req.postData, req.subredditData);
     if(!commentData.ok)
     {
         res.status(commentData.statusCode).send(commentData.error);

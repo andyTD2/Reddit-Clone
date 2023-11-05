@@ -3,7 +3,7 @@ const {parseTimeSinceCreation} = require(baseDir + "/src/utils/misc");
 
 const getPost = async function(req, res, next)
 {
-    const postData = await postModel.loadPostData(req.session.userId, req.params.postId);
+    const postData = await postModel.loadPostData(req.session.userID, req.params.postId);
     if(!postData)
     {
         res.status(404).send("Page not found.");

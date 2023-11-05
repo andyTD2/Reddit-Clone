@@ -27,7 +27,7 @@
 			<div class="header">
 				<%- include('partials/topbar') %>
 				<div class="headerControls">
-					<a href="/r/<%= subreddit.name %>" class="subName"><%= subreddit.name %></a>
+					<a href="/r/<%= subreddit.name %>" class="subName" data-subId="<%= subreddit.id %>"><%= subreddit.name %></a>
 					<div id="topbarRight">
 						<%- include('partials/searchbar') %>
 						<%- include('partials/accountControls') %>
@@ -81,7 +81,7 @@
 							<% } else { %>
 							<div class="postTitle"><%= post.title %></div>
 							<% } %>
-							<div class="postTop">submitted <%= post.timeSinceCreation %> by <%= post.userName %></div>
+							<div class="postTop">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a></div>
 							<div class="postBody"><%= post.content %></div>
 						</div>
 					</div>
@@ -128,13 +128,13 @@
 											<% } %>
 										</div>
 										<div class="commentContent">
-											<div class="commentTop">comment by <%= comment.userName %> <%- timeSinceCreation(comment.minutes_ago) %></div>
+											<div class="commentTop">comment by <a href="/u/<%= comment.userName %>" class="smallLink"><%= comment.userName %></a> <%- timeSinceCreation(comment.minutes_ago) %></div>
 											<div class="commentBody"><%= comment.content %></div>
 											<div class="replyBox">
-												<button class="replyButton" onclick="createReplyBox(this)"> reply </button>
+												<button class="replyButton openLoginModal"> reply </button>
 												<form style="display:none" class="commentForm" data-parentId="<%= comment.id %>" id="x">
 													<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
-													<input class="submitReply" type="button" onClick='postReply(this)' value="Submit">
+													<input class="submitReply" type="button" value="Submit" data-ref="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment">
 												</form>
 											</div>
 										</div>
@@ -146,7 +146,7 @@
 						<% comments.forEach((comment) => { %>
 							<% displayComment(comment, true); %>
 						<% }) %>
-						<div class="pageNum" data-pageNum="1">LOAD MORE</div>
+						<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/page=1/<%= filter %>" class="pageNum" data-pageNum="1">LOAD MORE</a>
 					</div>
 				</div>
 			</div>
@@ -158,98 +158,24 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
-	<% if (!locals.user) { %>
+	<script type="text/javascript" src="/scripts/loadNextPage.js"></script>
+	<script type="text/javascript" src="/scripts/commentReply.js"></script>
+<% if (!locals.user) { %>
 	<script type="text/javascript" src="/scripts/loginModal.js"></script>
 	<script type="text/javascript" src="/scripts/signupModal.js"></script>
-	<% } else { %>
-	<script type="text/javascript" src="/scripts/commentVote.js"></script>
-	<script>		
-		$("#postVote .upvote").on("click", function() {
-			sendPostVote($(this), 1);
-		})
-		$("#postVote .downvote").on("click", function() {
-			sendPostVote($(this), -1);
-		})
-
-		function sendPostVote(thisObj, voteDirection)
-		{
-			let postId = $("#postVote").attr("data-postId");
-			$.post(
-				`/vote/${postId}`,
-				{
-					//1 for upvote -1 for downvote
-					direction: voteDirection
-				},
-				function(data, status){
-					let parentOfThisDiv = thisObj.parent();
-					let voteCount = parentOfThisDiv.find(".voteCount");
-
-					if(voteDirection === 1)
-					{
-						parentOfThisDiv.find(".downvote").attr("src", "/images/down-arrow.png");
-						if(thisObj.attr("src") == "/images/up-arrow-green.png")
-						{
-							thisObj.attr("src", "/images/up-arrow.png");
-						}
-						else
-						{
-							thisObj.attr("src", "/images/up-arrow-green.png");
-						}
-					}
-					else
-					{
-						parentOfThisDiv.find(".upvote").attr("src", "/images/up-arrow.png");
-						if(thisObj.attr("src") == "/images/down-arrow-magenta.png")
-						{
-							thisObj.attr("src", "/images/down-arrow.png");
-						}
-						else
-						thisObj.attr("src", "/images/down-arrow-magenta.png");
-					}
-					voteCount.text(parseInt(voteCount.text()) + parseInt(data));
-				}
-			);
-		}
-	</script>
-	<% } %>
-
-	<%- include('ejs_scripts/test') %>
 	<script>
-
-		function createReplyBox(btn) {
-			let box = btn.parentElement.getElementsByClassName("commentForm")[0];
-			if(box.style.display == "none")
-				box.style.display = "flex";
-			else
-				box.style.display = "none";
-
-		}
-
-		function postReply(btn)
-		{
-			$.post(
-				"/r/<%= subreddit.name %>/post/<%= post.id %>/newComment",
-				{
-					parentId: btn.parentElement.getAttribute("data-parentId"),
-					comment: btn.parentElement.getElementsByClassName("replyComment")[0].value
-				},
-				function(data, status){
-					alert("<%= post.id %> Data: " + data + "\nStatus: " + status);
-				}
-			);
-		}
-
-		$(".comments").on("click.loadmore", ".pageNum", function() {
-			let pageNum = $(".pageNum").attr("data-pageNum");
-			let postId = $("#postVote").attr("data-postId");
-			let filter = $(".comments").attr("data-filter");
-			$.get(`/r/<%= subreddit.name %>/post/${postId}/page=${pageNum}/${filter}`,
-			function(data, status)
-			{
-				$(".pageNum").remove();
-				const insert = document.getElementsByClassName("comments")[0];
-				insert.insertAdjacentHTML('beforeend', data);
-			});
-		})
-		</script>
+		attachLoginModalListeners();
+		attachSignupModalListeners();
+		attachNextPageListener([{fn: refreshLoginModalListeners}], {optionalElementToInsertPageNum: $(".comments")[0]});
+	</script>
+<% } else { %>
+	<script type="text/javascript" src="/scripts/subscribe.js"></script>
+	<script type="text/javascript" src="/scripts/vote.js"></script>
+	<script>
+		attachSubscribeListener("<%= subreddit.id %>");
+		attachVoteListener();
+		attachReplyListeners("<%= subreddit.name %>", "<%= post.id %>");
+		attachNextPageListener([{fn: refreshVoteListeners}, {fn: refreshReplyListeners}], {optionalElementToInsertPageNum: $(".comments")[0]});
+	</script>
+<% } %>
 </html>

@@ -81,7 +81,7 @@
 							</div>
 						</div>
 					<% }) %>
-					<div class="pageNum" data-pageNum="<%= pageNum %>"><p>LOAD MORE</p></div>
+					<a href="/search/page=<%= pageNum %>" class="pageNum">LOAD MORE</a>
 				</div>
 			</div>
 			
@@ -92,29 +92,38 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
+	<script type="text/javascript" src="/scripts/loadNextPage.js"></script>
 	<% if (locals.user) { %>
 	<script type = "text/javascript" src="/scripts/vote.js"></script>
+	<script>
+		attachVoteListener();
+		attachNextPageListener([{fn: refreshVoteListeners}], 
+		{
+			isPostRequest: true, 
+			postParams: 
+			{
+				searchQuery: "<%= searchQuery %>",
+				filterByAuthor: "<%= filterByAuthor %>",
+				filterBySubreddit: "<%= filterBySubreddit %>"
+			}
+		});
+	</script>
 	<% } else { %>
 	<script type="text/javascript" src="/scripts/loginModal.js"></script>
 	<script type="text/javascript" src="/scripts/signupModal.js"></script>
-	<% } %>
 	<script>
-		$(".posts").on("click.loadmore", ".pageNum", function() {
-			let pageNum = $(".pageNum").attr("data-pageNum");
-			let filter = $(".posts").attr("data-filter");
-			$.post(`/search/page=${pageNum}`,
-			{searchQuery: "<%= searchQuery %>",
-			filterByAuthor: "<%= filterByAuthor %>",
-			filterBySubreddit: "<%= filterBySubreddit %>"},
-			function(data, status)
+		attachLoginModalListeners();
+		attachSignupModalListeners();
+		attachNextPageListener([{fn: refreshLoginModalListeners}], 
+		{
+			isPostRequest: true, 
+			postParams: 
 			{
-				$(".pageNum").remove();
-				const insert = document.getElementsByClassName("posts")[0];
-				insert.insertAdjacentHTML('beforeend', data);
-			});
-		})
-
-
-		var docWidth = document.documentElement.offsetWidth;
+				searchQuery: "<%= searchQuery %>",
+				filterByAuthor: "<%= filterByAuthor %>",
+				filterBySubreddit: "<%= filterBySubreddit %>"
+			}
+		});
 	</script>
+	<% } %>
 </html>

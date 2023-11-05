@@ -14,14 +14,13 @@ const getPostPage = async function (userId, postId, pageNum, filter, subredditDa
     if(!commentData.ok){
         throw new error("Something happened(Invalid comment data...)");
     }
-
     let params = {
         subreddit: subredditData,
         post: postData,
         comments: commentData.params.comments,
         user: user,
         filter: filter,
-        isSubscribed: await userModel.getUserSubscriptionStatus(userId, (subredditData && subredditData.filter))
+        isSubscribed: await userModel.getUserSubscriptionStatus(userId, (subredditData && subredditData.id))
     };
 
     return {ok: true, params: params};

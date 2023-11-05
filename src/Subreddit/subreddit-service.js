@@ -19,7 +19,8 @@ const getNextPage = async function(subredditData, pageNum, filter, userId) {
     let params = {
         posts: await subredditModel.getSubredditPosts({filter: filter, pageNum: pageNum, subreddit: subredditData, userID: userId}),
         subreddit: subredditData,
-        pageNum: pageNum
+        pageNum: pageNum,
+        filter: filter
     };
     return {ok: true, params: params};
 }

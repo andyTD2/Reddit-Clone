@@ -11,7 +11,7 @@
     <body>
 
 		<%- include('partials/loginModal') %>
-
+		<%- include('partials/signupModal') %>
 		<div class="container">
 		
 			<div class="header">
@@ -35,14 +35,12 @@
                 <form action="/r/<%= subreddit.name %>/post/newPost" method="POST" id="createPostForm">
                     <label for="postTitle" class="createFormLabelRequired">Post Title (required)</label>
                     <input type="text" class="createPostText smallInputBox" id="postTitle" name="postTitle">
-					<br>
 					<label for="postLink">Link</label>
 					<input type="text" class="createPostText smallInputBox" id="postLink" name="postLink"> 
 					 <div id="createPostCheckbox">
 						<input type="checkbox" id="useArticleTitle" class="checkBox" name="useArticleTitle">
-						<label for="useArticleTitle" class="checkboxLabel">Use article title</label><br>
+						<label for="useArticleTitle" class="checkboxLabel">Use article title</label>
 					</div>
-					<br>
                     <label for="content">Body</label>
                     <textarea class="createPostText" id="postContent" name="postContent" rows="20" cols="25"></textarea>
 					<input type="submit" id="createPostSubmit" value="Submit">
@@ -58,24 +56,14 @@
 	</script>
 	<% if (!locals.user) { %>
 		<script type="text/javascript" src="/scripts/loginModal.js"></script>
+		<script type="text/javascript" src="/scripts/signupModal.js"></script>
+		<script>
+			attachLoginModalListeners();
+			attachSignupModalListeners();
+		</script>
 	<% } %>
-
-	<script>
-		$("#createPostForm").on("submit", function(e) {
-			e.preventDefault();
-			$("#createPostError").text("");
-			$.ajax({
-				url: "/r/<%= subreddit.name %>/post/newPost",
-				type: "post",
-				data: $("#createPostForm").serialize(),
-				success: function(data) {
-					location.href = `/r/<%= subreddit.name %>/post/${data}`;
-				},
-				error: function(xhr) {
-					console.log(xhr.error);
-					$("#createPostError").text(xhr.responseText);
-        		}
-    		});
-		})
-	</script>
+		<script type="text/javascript" src="/scripts/createPost.js"></script>
+		<script>
+			attachCreatePostSubmitListener("<%= subreddit.name %>");
+		</script>
 </html>

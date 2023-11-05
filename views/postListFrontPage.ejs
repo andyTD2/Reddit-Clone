@@ -1,10 +1,10 @@
 <% posts.forEach((post) => { %>
     <div class="post" data-postId="<%= post.id %>">
-        <div class="vote">
+        <div class="vote" data-postId="<%= post.id %>">
             <% if (post.voteDirection == 1) { %>
-                <img src="/images/up-arrow-green.png" class="upvote">
+                <img src="/images/up-arrow-green.png" class="upvote openLoginModal">
             <%  } else {  %>
-                <img src="/images/up-arrow.png" class="upvote">
+                <img src="/images/up-arrow.png" class="upvote openLoginModal">
             <% } %>
 
             <div class="voteCount">
@@ -12,9 +12,9 @@
             </div>
 
             <% if (post.voteDirection == -1) { %>
-                <img src="/images/down-arrow-magenta.png" class="downvote">
+                <img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
             <% } else { %>
-                <img src="/images/down-arrow.png" class="downvote">
+                <img src="/images/down-arrow.png" class="downvote openLoginModal">
             <% } %>
         </div>
         <% if (post.imgSrc == "") { %>
@@ -34,5 +34,5 @@
     </div>
 <% }) %>
 <% if (posts.length > 0) {%>
-<div class="pageNum" data-pageNum="<%= pageNum %>">LOAD MORE</div>
+<a href="/next/page=<%= pageNum %>/<%= filter %>" class="pageNum">LOAD MORE</a>
 <% } %>

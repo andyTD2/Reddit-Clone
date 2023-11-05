@@ -2,7 +2,7 @@ const postService = require(baseDir + "/src/Post/post-service");
 
 const handlePostPageRequest = async function (req, res)
 {
-    let post = await postService.getPostPage(req.session.userId, req.params.postId, req.pageNum, 
+    let post = await postService.getPostPage(req.session.userID, req.params.postId, req.pageNum, 
                                             req.params.filter, req.subredditData, req.postData, req.user);
 
     if(!post.ok)

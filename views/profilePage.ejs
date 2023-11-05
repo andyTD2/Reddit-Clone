@@ -94,7 +94,7 @@
 						</div>
                         <% } %>
 					<% }) %>
-					<div class="pageNum" data-pageNum="<%= pageNum %>"><p>LOAD MORE</p></div>
+					<a href="/u/<%= profileName %>/next/page=<%= pageNum %>" class="pageNum">LOAD MORE</a>
 				</div>
 			</div>
 			
@@ -105,26 +105,20 @@
 		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 		crossorigin="anonymous">
 	</script>
+	<script type="text/javascript" src="/scripts/loadNextPage.js"></script>
 	<% if (locals.user) { %>
-		<script type = "text/javascript" src="/scripts/vote.js"></script>
+		<script type="text/javascript" src="/scripts/vote.js"></script>
+		<script>
+			attachNextPageListener([{fn: refreshVoteListeners}]);
+			attachVoteListener();
+		</script>
 	<% } else { %>
 		<script type="text/javascript" src="/scripts/loginModal.js"></script>
 		<script type="text/javascript" src="/scripts/signupModal.js"></script>
+		<script>
+			attachLoginModalListeners();
+			attachSignupModalListeners();
+			attachNextPageListener([{fn: refreshLoginModalListeners}]);
+		</script>
 	<% } %>
-
-	<script>
-			$(".contentFeed").on("click.loadmore", ".pageNum", function() {
-			let pageNum = $(".pageNum").attr("data-pageNum");
-			$.get(`/u/<%= profileName %>/next/page=${pageNum}`,
-			function(data, status)
-			{
-				$(".pageNum").remove();
-				const insert = document.getElementsByClassName("contentFeed")[0];
-				insert.insertAdjacentHTML('beforeend', data);
-			});
-		})
-
-
-		var docWidth = document.documentElement.offsetWidth;
-	</script>
 </html>

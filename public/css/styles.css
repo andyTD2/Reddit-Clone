@@ -152,6 +152,11 @@ body {
     object-fit: cover;
 }
 
+#passwordLoginInput
+{
+  margin-top: 20px;
+}
+
 .modal {
   background-color: rgb(224, 224, 224);
   position: fixed;

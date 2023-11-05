@@ -1,19 +1,48 @@
-function displaySignupModal() {
+function displaySignupModal() 
+{
     $("#signupModal").addClass("modalOpened");
-};
-$(".openSignupModal").on("click", function(e) {
-    e.preventDefault();
-    displaySignupModal();
-    });
+}
 
-function closeSignupModal() {
+function closeSignupModal() 
+{
     $("#signupModalError").text("");
     $("#signupModal").removeClass("modalOpened");
 };
-$("#closeSignupModal").on("click", closeSignupModal);
 
-$("#signupForm").on("submit", function(e) {
-    e.preventDefault();
+function validateUsername(username)
+{
+    const usernameValidation = new RegExp("^[a-zA-Z0-9_-]*$");
+
+    let validation = {
+        charactersValid: usernameValidation.test(username), 
+        lengthValid: username.length >= 3 && username.length <= 20
+    };
+    validation["valid"] = validation.charactersValid && validation.lengthValid;
+
+    return validation;
+};
+
+function validatePassword(password)
+{
+    const atLeastOneNum = new RegExp(".*[0-9].*");
+    const atLeastOneAlpha = new RegExp(".*[a-zA-Z].*");
+    const atLeastOneSpecial = new RegExp(".*[!@._-].*");
+    const passwordValidation = new RegExp("^[a-zA-Z0-9!@._-]*$");
+
+
+    let validation = {
+        lengthValid: password.length >= 8 && password.length <= 30, 
+        hasOneNum: atLeastOneNum.test(password), 
+        hasOneAlpha: atLeastOneAlpha.test(password), 
+        hasOneSpecial: atLeastOneSpecial.test(password) && passwordValidation.test(password),
+    };
+    validation["valid"] = (validation.lengthValid && validation.hasOneNum && validation.hasOneAlpha && validation.hasOneSpecial);
+    
+    return validation;
+}
+
+function submitSignup(isUsernameValid, isPasswordValid)
+{
     if(isUsernameValid && isPasswordValid)
     {
         $.ajax({
@@ -34,46 +63,7 @@ $("#signupForm").on("submit", function(e) {
     {
         $("#signupModalError").text("Requirements not met!")
     }
-})
-
-let isUsernameValid = false;
-
-const usernameValidation = new RegExp("^[a-zA-Z0-9_-]*$");
-
-$("#usernameSignupInput").on("input", function() {
-    const usernameInput = $("#usernameSignupInput").val();
-
-    let charactersValid = usernameValidation.test(usernameInput);
-    let lengthValid = usernameInput.length >= 3 && usernameInput.length <= 20;
-
-    isUsernameValid = charactersValid && lengthValid;
-
-    setRequirementsColor(lengthValid, "#usernameLengthRequirement");
-    setRequirementsColor(charactersValid, "#usernameCharactersRequirement");
-})
-
-const atLeastOneNum = new RegExp(".*[0-9].*");
-const atLeastOneAlpha = new RegExp(".*[a-zA-Z].*");
-const atLeastOneSpecial = new RegExp(".*[!@._-].*");
-const passwordValidation = new RegExp("^[a-zA-Z0-9!@._-]*$")
-
-let isPasswordValid = false;
-
-$("#passwordSignupInput").on("input", function() {
-    const passwordInput = $("#passwordSignupInput").val();
-
-    let lengthValid = passwordInput.length >= 8 && passwordInput.length <= 30;
-    let hasOneNum = atLeastOneNum.test(passwordInput);
-    let hasOneAlpha = atLeastOneAlpha.test(passwordInput);
-    let hasOneSpecial = atLeastOneSpecial.test(passwordInput) && passwordValidation.test(passwordInput);
-
-    isPasswordValid = (lengthValid && hasOneNum && hasOneAlpha && hasOneSpecial)
-
-    setRequirementsColor(lengthValid, "#passwordLengthRequirement");
-    setRequirementsColor(hasOneNum, "#passwordNumRequirement");
-    setRequirementsColor(hasOneAlpha, "#passwordAlphaRequirement");
-    setRequirementsColor(hasOneSpecial, "#passwordSpecialRequirement");
-});
+}
 
 
 //Sets the color of the requirements text to let the user know if they have met the password or username requirements.
@@ -91,4 +81,44 @@ function setRequirementsColor(requirementFilled, requirementSelector) {
         $(requirementSelector).addClass("incorrectFormat");
     }
     return;
+}
+
+function attachSignupModalListeners()
+{
+    $(".openSignupModal").on("click", function(e) {
+        e.preventDefault();
+        displaySignupModal();
+    });
+
+    $("#closeSignupModal").on("click", closeSignupModal);
+
+    let isUsernameValid = false;
+    let isPasswordValid = false;
+
+    $("#usernameSignupInput").on("input", function() {
+        const usernameInput = $("#usernameSignupInput").val();
+        let usernameValidity = validateUsername(usernameInput);
+        isUsernameValid = usernameValidity.valid;
+
+        setRequirementsColor(usernameValidity.lengthValid, "#usernameLengthRequirement");
+        setRequirementsColor(usernameValidity.charactersValid, "#usernameCharactersRequirement");
+    })
+
+    $("#passwordSignupInput").on("input", function() {
+        const passwordInput = $("#passwordSignupInput").val();
+    
+        let passwordValidity = validatePassword(passwordInput);
+        isPasswordValid = passwordValidity.valid;
+    
+        setRequirementsColor(passwordValidity.lengthValid, "#passwordLengthRequirement");
+        setRequirementsColor(passwordValidity.hasOneNum, "#passwordNumRequirement");
+        setRequirementsColor(passwordValidity.hasOneAlpha, "#passwordAlphaRequirement");
+        setRequirementsColor(passwordValidity.hasOneSpecial, "#passwordSpecialRequirement");
+    });
+
+    $("#signupForm").on("submit", function(e) {
+        e.preventDefault();
+        submitSignup(isUsernameValid, isPasswordValid);
+    })
+
 }
