@@ -1,0 +1,29 @@
+<div class="postHeader">
+    <%- include('postVote', {voteDirection: post.voteDirection, numVotes: post.numVotes, voteHref: `/vote/${post.id}`}) %>
+    <%- include('previewImg', {post: post}) %>
+
+    
+    <div class="postRight">
+        <% if (post.postLink != "") { %>
+        <a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
+        <% } else { %>
+        <a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
+        <% } %>
+
+
+        <% if (locals.subreddit) { %>
+        <div class="postInfo">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a></div>
+        <% } else { %>
+        <div class="postInfo">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a> to <a href="/r/<%= post.subredditName %>" class="smallLink"><%= post.subredditName %></a></div>
+        
+        
+        <% } if (!locals.excludeCommentCount) {%>
+        <a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
+        <% } %>
+
+
+        <% if (locals.includePostBody) { %>
+        <div class="postBody"><%= post.content %></div>
+        <% } %>
+    </div>
+</div>

@@ -1,47 +1,4 @@
-<% function displayComment(comment, evens) { %>
-    <% if (evens) { %>
-        <div class="commentBox even">
-    <% } else { %>
-        <div class="commentBox odd">
-    <% } %>
-            <div class="comment">
-                <div class="vote" data-commentId="<%= comment.id %>">
-                    <% if (comment.voteDirection == 1) { %>
-                        <img src="/images/up-arrow-green.png" class="upvote openLoginModal">
-                    <%  } else {  %>
-                        <img src="/images/up-arrow.png" class="upvote openLoginModal">
-                    <% } %>
-
-                    <div class="voteCount">
-                        <%=comment.numVotes%>
-                    </div>
-
-                    <% if (comment.voteDirection == -1) { %>
-                        <img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
-                    <% } else { %>
-                        <img src="/images/down-arrow.png" class="downvote openLoginModal">
-                    <% } %>
-                </div>
-
-                <div class="commentContent">
-                    <div class="commentTop">comment by <a href="/u/<%= comment.userName %>" class="smallLink"><%= comment.userName %></a> <%- timeSinceCreation(comment.minutes_ago) %></div>
-                    <div class="commentBody"><%= comment.content %></div>
-                    <div class="replyBox">
-                        <button class="replyButton openLoginModal"> reply </button>
-                        <form style="display:none" class="commentForm" data-parentId="<%= comment.id %>" id="x">
-                            <textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
-                            <input class="submitReply" type="button" value="Submit" data-ref="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment">
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <% comment.children.forEach((comment) => {displayComment(comment, !evens);}) %>
-        </div>
-    
-<% } %>
-<% comments.forEach((comment) => { %>
-    <% displayComment(comment, true); %>
-<% }) %>
+<%- include('partials/postComment', {comments: comments}) %>
 <% if (comments.length > 0) { %>
-<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/page=<%= pageNum %>/<%= filter %>" class="pageNum" data-pageNum="<%= pageNum %>">LOAD MORE</a>
+<%- include('partials/loadMore', {loadMoreHref: `/r/${subreddit.name}/post/${post.id}/page=${pageNum}/${filter}`}) %>
 <% } %>

@@ -1,0 +1,9 @@
+<div class="filters">
+<% filterList.forEach((filter) => { %>
+    <% if (curFilter == filter) { %>
+        <a href="<%= filterHref %>/<%= filter %>" class="currentFilter"><%= filter %></a>
+    <% } else { %>
+        <a href="<%= filterHref %>/<%= filter %>"><%= filter %></a>
+    <% } %>
+<% }) %>
+</div>

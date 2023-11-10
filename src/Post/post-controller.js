@@ -80,4 +80,11 @@ const handleNextResultsPageRequest = async function(req, res)
 
 };
 
-module.exports = { handlePostPageRequest, handleNewPostRequest, handlePostVoteRequest, handleSearchResultsRequest, handleNextResultsPageRequest };
+
+
+const handleNewPostFormRequest = async function(req, res) 
+{
+    res.render("createPost", await postService.getNewPostForm(req.user, req.subredditData));
+}
+
+module.exports = { handlePostPageRequest, handleNewPostRequest, handlePostVoteRequest, handleSearchResultsRequest, handleNextResultsPageRequest, handleNewPostFormRequest };

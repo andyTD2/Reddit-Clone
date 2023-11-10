@@ -1,0 +1,18 @@
+<% console.log(locals.voteHref) %>
+<div class="vote" data-href="<%= voteHref %>">
+    <% if (voteDirection == 1) { %>
+        <img src="/images/up-arrow-green.png" class="upvote openLoginModal">
+    <%  } else {  %>
+        <img src="/images/up-arrow.png" class="upvote openLoginModal">
+    <% } %>
+
+    <div class="voteCount">
+        <%= numVotes %>
+    </div>
+
+    <% if (voteDirection == -1) { %>
+        <img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
+    <% } else { %>
+        <img src="/images/down-arrow.png" class="downvote openLoginModal">
+    <% } %>
+</div>

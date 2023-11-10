@@ -27,11 +27,7 @@
 			</div>
 			
 			<div class="feed">
-                <div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
-					<div id="subredditDescription">Preview the description here</div>
-					<div id="subredditSidebar">Preview the sidebar here</div>
-				</div>
+                <%- include('partials/subredditSidebar') %>
                 <form action="/createSubreddit" method="POST" id="createSubredditForm">
                     <label for="subredditName">Subreddit Name</label>
                     <input type="text" class="createSubredditText smallInputBox" id="subredditName" name="subredditName" maxlength="30">

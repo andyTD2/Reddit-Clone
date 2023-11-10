@@ -1,0 +1,10 @@
+<div class="comment">
+    <a href="/r/<%= activity.subredditName %>/post/<%= activity.postId %>" class="postTitle"><%= activity.postTitle %> <span class="postInfo">submitted <%= activity.timeSincePostCreation %> by <%= activity.postAuthor %></span></a>
+    <div class="commentContent">
+        <%- include('postVote', {voteDirection: activity.voteDirection, numVotes: activity.numVotes, voteHref: `/voteComment/${activity.id}`}) %>
+        <div class="commentRight">
+            <div class="commentInfo">comment by <%= profileName %> <%= activity.timeSinceCommentCreation %></div>
+            <div class="commentContent"><%= activity.content %></div>
+        </div>
+    </div>
+</div>

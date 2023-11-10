@@ -24,14 +24,8 @@
 					</div>
 				</div>
 			</div>
-			
 			<div class="feed">
-				<div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
-					<div id="subredditDescription"><%= subreddit.description %></div>
-					<div id="subredditSidebar"><%- subreddit.sidebar %></div>
-				</div>
+				<%- include('partials/subredditSidebar') %>
                 <form action="/r/<%= subreddit.name %>/post/newPost" method="POST" id="createPostForm">
                     <label for="postTitle" class="createFormLabelRequired">Post Title (required)</label>
                     <input type="text" class="createPostText smallInputBox" id="postTitle" name="postTitle">

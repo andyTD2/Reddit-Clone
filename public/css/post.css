@@ -41,10 +41,6 @@
     margin-right: 5px;
 }
 
-#postVote {
-    margin-left: 0px;
-    margin-right: 10px;
-}
 
 .voteCount{
     font-size: var(--font-size-mid);
@@ -127,7 +123,7 @@
     padding-bottom: 30px;
 }
 
-.postContent {
+.postHeader {
     background-color: var(--main-bg-color);
     padding-left: 30px;
     padding-right: 30px;
@@ -149,6 +145,10 @@
 
 .postTitle {
     font-size: var(--font-size-large);
+    text-decoration: none;
+    color: var(--link-font-color);
+    text-decoration: none;
+    color: var(--link-font-color);
 }
 
 .postBody {
@@ -164,6 +164,8 @@
     border-radius: 5px;
     justify-content: center;
     align-items: center;
+    text-decoration: none;
+    color: white;
 }
 
 
@@ -191,13 +193,4 @@
     padding-right: 4px;
 }
 
-.postTitleLink {
-    text-decoration: none;
-    color: var(--link-font-color);
-}
-
-.postTitleLink:visited {
-    text-decoration: none;
-    color: var(--link-font-color);
-}
 

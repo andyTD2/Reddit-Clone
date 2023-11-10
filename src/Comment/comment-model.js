@@ -1,11 +1,14 @@
 "use strict";
+
+const { parse } = require("ipaddr.js");
+
 const errors = require(baseDir + "/src/utils/error");
 
 const db = require(baseDir + "/src/utils/db");
 const dbCon = db.pool;
 const mysql = db.mysql;
 const queryDb = db.queryDb;
-const {getCommentPageNumOffset} = require(baseDir + "/src/utils/misc");
+const {getCommentPageNumOffset, parseTimeSinceCreation} = require(baseDir + "/src/utils/misc");
 
 
 
@@ -79,7 +82,13 @@ const getParentComments = async function(postId, pageNum, filter)
                 AS minutes_ago FROM COMMENTS LEFT JOIN users ON comments.user_id = users.id WHERE post_id = ? AND parent_id IS null
                 ORDER BY ${orderBy} DESC LIMIT ? OFFSET ?`;
 
-    return (await queryDb(query, [postId, COMMENTS_PER_PAGE, offset]));
+    let result = (await queryDb(query, [postId, COMMENTS_PER_PAGE, offset]));
+    for (let comment of result)
+    {
+        comment.timeSinceCreation = parseTimeSinceCreation(comment.minutes_ago);
+    }
+
+    return result;
 };
 
 
@@ -94,6 +103,10 @@ const getChildrenOfComments = async function(commentList, postId, userId) {
         ORDER BY created_at DESC`;
 
         comment.children = (await queryDb(childCommentQuery, [postId, comment.id]));
+        for (let childComment of comment.children)
+        {
+            childComment.timeSinceCreation = parseTimeSinceCreation(childComment.minutes_ago);
+        }
         await getChildrenOfComments(comment.children, postId, userId);
     }
     return;

@@ -79,6 +79,7 @@ const getProfilePage = async function(profileName, curUserId, pageNum)
     let userActivity = await userModel.getRecentUserActivity(profile[0].id, curUserId, POSTS_PER_PAGE, pageNum);
     pageNum = parseInt(pageNum) + 1;
 
+    console.log(userActivity);
 
     let params = {
         pageNum: pageNum,

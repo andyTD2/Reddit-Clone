@@ -9,9 +9,7 @@ const subredditMiddlewares = require(baseDir + "/src/Subreddit/subreddit-middlew
 const commentController = require(baseDir + "/src/Comment/comment-controller")
 
 router.use("/newPost", subredditMiddlewares.getSubredditData);
-router.get("/newPost", async function(req, res) {
-    res.render("createPost", {user: req.user, subreddit: req.subredditData})
-});
+router.get("/newPost", postController.handleNewPostFormRequest);
 
 router.use("/newPost", subredditMiddlewares.getSubredditData);
 router.post("/newPost", postController.handleNewPostRequest);

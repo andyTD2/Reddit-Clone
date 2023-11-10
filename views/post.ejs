@@ -8,18 +8,8 @@
     <link rel="stylesheet" href="/css/styles.css">
 	<link rel="stylesheet" href="/css/post.css">
 
-
     </head>
     <body>
-		<% timeSinceCreation = function(timeInMinutes) { %>
-			<% if (timeInMinutes < 1) return "less than 1 minute ago"; %>
-			<% if (timeInMinutes < 60) return `${timeInMinutes} minutes ago`; %>
-			<% if (timeInMinutes < 1440) return `${Math.floor(timeInMinutes / 60)} hours ago`; %>
-			<% if (timeInMinutes < 43200) return `${Math.floor(timeInMinutes / 1440)} days ago`; %>
-			<% if (timeInMinutes < 518400) return `${Math.floor(timeInMinutes / 43200)} months ago`; %>
-			<% return `{Math.floor(timeInMinutes / 518400)} years ago`; %>
-		<% } %>
-
 		<%- include('partials/loginModal') %>
 		<%- include('partials/signupModal') %>
 		<div class="container">
@@ -36,55 +26,9 @@
 			</div>
 			
 			<div class="feed">
-				<div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
-					<a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
-					<% if (isSubscribed) { %>
-					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
-					<% } else { %>
-					<a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Subscribe</a>
-					<% } %>
-					<div id="subredditDescription"><%= subreddit.description %></div>
-					<div id="subredditSidebar"><%- subreddit.sidebar %></div>
-				</div>
+				<%- include('partials/subredditSidebar') %>
 				<div class="post">
-					<div class="postContent">
-						<div class="postLeft">
-							<div id="postVote" class="vote" data-postId="<%= post.id %>">
-								<% if (post.voteDirection == 1) { %>
-									<img src="/images/up-arrow-green.png" class="upvote openLoginModal">
-								<%  } else {  %>
-									<img src="/images/up-arrow.png" class="upvote openLoginModal">
-								<% } %>
-
-								<div class="voteCount">
-									<%=post.numVotes%>
-								</div>
-
-								<% if (post.voteDirection == -1) { %>
-									<img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
-								<% } else { %>
-									<img src="/images/down-arrow.png" class="downvote openLoginModal">
-								<% } %>
-
-
-							</div>
-						</div>
-						<% if (post.imgSrc == "") { %>
-						<img src="/images/text-icon.png" class="postPreview"></img>
-						<% } else { %>
-						<img src="<%= post.imgSrc %>" class="postPreview"></img>
-						<% } %>
-						<div class="postRight">								
-							<% if (post.postLink != "") { %>
-							<a href="<%= post.postLink %>" class="postTitle postTitleLink"><%= post.title %></a>
-							<% } else { %>
-							<div class="postTitle"><%= post.title %></div>
-							<% } %>
-							<div class="postTop">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a></div>
-							<div class="postBody"><%= post.content %></div>
-						</div>
-					</div>
+					<%- include('partials/postHeader', {post: post, subreddit: subreddit, excludeCommentCount: true, includePostBody: true}) %>
 					<div class="newParentComment">
 						<form action="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment" method="POST" class="commentForm">
 							<label for="comment">post a new comment:</label>
@@ -94,59 +38,9 @@
 					</div>
 					<div class="comments" data-filter="<%= filter %>">
 						<div class="numComments"><%= post.numComments %> comments</div>
-						<div class="filters">	
-							<% if (filter == "top") { %>
-								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/top" class="currentFilter">top</a>
-							<% } else { %> <a href="/r/<%= subreddit.name %>/post/<%= post.id %>/top">top</a> <% } %>
-	
-							<% if (filter == "new") { %>
-								<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/new" class="currentFilter">new</a>
-							<% } else { %> <a href="/r/<%= subreddit.name %>/post/<%= post.id %>/new">new</a> <% } %>
-						</div>
-						<% function displayComment(comment, evens) { %>
-							<% if (evens) { %>
-								<div class="commentBox even">
-							<% } else { %>
-								<div class="commentBox odd">
-							<% } %>
-									<div class="comment">
-										<div class="vote" data-commentId="<%= comment.id %>">
-											<% if (comment.voteDirection == 1) { %>
-												<img src="/images/up-arrow-green.png" class="upvote openLoginModal">
-											<%  } else {  %>
-												<img src="/images/up-arrow.png" class="upvote openLoginModal">
-											<% } %>
-
-											<div class="voteCount">
-												<%=comment.numVotes%>
-											</div>
-
-											<% if (comment.voteDirection == -1) { %>
-												<img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
-											<% } else { %>
-												<img src="/images/down-arrow.png" class="downvote openLoginModal">
-											<% } %>
-										</div>
-										<div class="commentContent">
-											<div class="commentTop">comment by <a href="/u/<%= comment.userName %>" class="smallLink"><%= comment.userName %></a> <%- timeSinceCreation(comment.minutes_ago) %></div>
-											<div class="commentBody"><%= comment.content %></div>
-											<div class="replyBox">
-												<button class="replyButton openLoginModal"> reply </button>
-												<form style="display:none" class="commentForm" data-parentId="<%= comment.id %>" id="x">
-													<textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
-													<input class="submitReply" type="button" value="Submit" data-ref="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment">
-												</form>
-											</div>
-										</div>
-									</div>
-									<% comment.children.forEach((comment) => {displayComment(comment, !evens);}) %>
-								</div>
-							
-						<% } %>
-						<% comments.forEach((comment) => { %>
-							<% displayComment(comment, true); %>
-						<% }) %>
-						<a href="/r/<%= subreddit.name %>/post/<%= post.id %>/page=1/<%= filter %>" class="pageNum" data-pageNum="1">LOAD MORE</a>
+						<%- include('partials/postFilter', {filterHref: `/r/${subreddit.name}/post/${post.id}`, filterList: ["top", "new"], curFilter: filter}) %>
+						<%- include('partials/postComment', {comments: comments}) %>
+						<%- include('partials/loadMore', {loadMoreHref: `/r/${subreddit.name}/post/${post.id}/page=1/${filter}`}) %>
 					</div>
 				</div>
 			</div>

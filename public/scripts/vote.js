@@ -38,18 +38,10 @@ function sendVote(voteContainer, voteDirection, voteUrl)
         });
 }
 
+
 function getVoteUrl(voteContainer)
 {
-    let voteUrl;
-    let commentId = voteContainer.attr("data-commentId");
-    if(commentId) voteUrl = `/voteComment/${commentId}`;
-    else
-    {
-        let postId = voteContainer.attr("data-postId");
-        voteUrl = `/vote/${postId}`;
-    }
-
-    return voteUrl;
+    return voteContainer.attr("data-href");
 }
 
 function attachVoteListener()

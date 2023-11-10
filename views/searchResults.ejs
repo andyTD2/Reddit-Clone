@@ -26,9 +26,7 @@
 			</div>
 			
 			<div class="feed">
-				<div class="sidebar">
-					<a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
-				</div>
+				<%- include('partials/subredditSidebar') %>
 				<div id="searchbar">
 					<form action="/search" method="POST" id="searchFormExtended">
 						<label for="searchQuery">Search</label>
@@ -48,40 +46,9 @@
 				</div>					
 				<div class="contentFeed posts">
 					<% posts.forEach((post) => { %>
-						<div class="post">
-							<div class="vote" data-postId="<%= post.id %>">
-								<% if (post.voteDirection == 1) { %>
-									<img src="/images/up-arrow-green.png" class="upvote openLoginModal">
-								<%  } else {  %>
-									<img src="/images/up-arrow.png" class="upvote openLoginModal">
-								<% } %>
-
-								<div class="voteCount">
-									<%= post.numVotes %>
-								</div>
-								<% if (post.voteDirection == -1) { %>
-									<img src="/images/down-arrow-magenta.png" class="downvote openLoginModal">
-								<% } else { %>
-									<img src="/images/down-arrow.png" class="downvote openLoginModal">
-								<% } %>
-							</div>
-							<% if (post.imgSrc == "") { %>
-							<img src="/images/text-icon.png" class="postPreview"></img>
-							<% } else { %>
-							<img src="<%= post.imgSrc %>" class="postPreview"></img>
-							<% } %>
-							<div class="postRight">
-								<% if (post.postLink != "") { %>
-								<a href="<%= post.postLink %>" class="postTitle"><%= post.title %></a>
-								<% } else { %>
-								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postTitle"><%= post.title %></a>
-								<% } %>
-								<div class="postInfo">submitted <%= post.timeSinceCreation %> by <a href="/u/<%= post.userName %>" class="smallLink"><%= post.userName %></a> to <a href="/r/<%= post.subredditName %>" class="smallLink"><%= post.subredditName %></a></div>
-								<a href="/r/<%= post.subredditName %>/post/<%= post.id %>" class="postComments"><%= post.numComments %> comments</a>
-							</div>
-						</div>
+						<%- include('partials/postHeader', {post: post}) %>
 					<% }) %>
-					<a href="/search/page=<%= pageNum %>" class="pageNum">LOAD MORE</a>
+					<%- include('partials/loadMore', {loadMoreHref: `/search/page=${pageNum}`}) %>
 				</div>
 			</div>
 			

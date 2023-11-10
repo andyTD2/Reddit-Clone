@@ -1,6 +1,6 @@
 @import './constants.css';
 
-.post {
+.postHeader {
     padding-top: 5px;
     padding-bottom: 5px;
     margin-bottom: 3px;
@@ -11,7 +11,7 @@
     background-color: var(--main-bg-color);
 }
 
-.post:hover {
+.postHeader:hover {
     box-shadow: 0px 0px 10px rgb(255, 255, 255);
 }
 

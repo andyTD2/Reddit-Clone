@@ -1,0 +1,28 @@
+<% function displayComment(comment, evens) { %>
+    <% if (evens) { %>
+        <div class="commentBox even">
+    <% } else { %>
+        <div class="commentBox odd">
+    <% } %>
+            <div class="comment">
+                <%- include('postVote', {voteDirection: comment.voteDirection, numVotes: comment.numVotes, voteHref: `/voteComment/${comment.id}`}) %>
+
+                <div class="commentContent">
+                    <div class="commentTop">comment by <a href="/u/<%= comment.userName %>" class="smallLink"><%= comment.userName %></a> <%= comment.timeSinceCreation %></div>
+                    <div class="commentBody"><%= comment.content %></div>
+                    <div class="replyBox">
+                        <button class="replyButton openLoginModal"> reply </button>
+                        <form style="display:none" class="commentForm" data-parentId="<%= comment.id %>" id="x">
+                            <textarea rows="8" cols="50" name="reply" class="replyComment"></textarea>
+                            <input class="submitReply" type="button" value="Submit" data-ref="/r/<%= subreddit.name %>/post/<%= post.id %>/newComment">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <% comment.children.forEach((comment) => {displayComment(comment, !evens);}) %>
+        </div>
+    
+<% } %>
+<% comments.forEach((comment) => { %>
+    <% displayComment(comment, true); %>
+<% }) %>

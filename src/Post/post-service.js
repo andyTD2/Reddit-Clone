@@ -107,5 +107,20 @@ const getSearchResults = async function(searchQuery, filterBySubreddit, filterBy
     return {ok: true, params: params};
 }
 
+const handleNewPostFormRequest = async function(req, res) {
 
-module.exports = { getPostPage, createPost, voteOnPost, getSearchResults};
+    res.render("createPost", {user: req.user, subreddit: req.subredditData, isSubscribed: await userModel.getUserSubscriptionStatus(req.session.userID, (req.subredditData && req.subredditData.id)) });
+}
+
+
+const getNewPostForm = async function(user, subreddit)
+{
+    return {
+        user: user,
+        subreddit: subreddit,
+        isSubscribed: await userModel.getUserSubscriptionStatus((user && user.id), (subreddit && subreddit.id))
+    };
+}
+
+
+module.exports = { getPostPage, createPost, voteOnPost, getSearchResults, getNewPostForm};
