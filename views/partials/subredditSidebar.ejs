@@ -1,13 +1,17 @@
 <div class="sidebar">
     <a href="/createSubreddit" class="openLoginModal sidebarBtn" id="createSubredditLink">Create Subreddit</a>
     <% if (locals.subreddit) { %>
-    <a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
-    <% if (locals.isSubscribed) { %>
-    <a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
-    <% } else { %>
-    <a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Subscribe</a>
+        <a href="/r/<%= subreddit.name %>/post/newPost" class="openLoginModal sidebarBtn" id="createPostLink"> Create Post</a>
+        <% if (locals.isSubscribed) { %>
+            <a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Unsubscribe</a>
+        <% } else { %>
+            <a href="" class="openLoginModal sidebarBtn" id="saveSubreddit">Subscribe</a>
+        <% } %>
+        <div id="subredditDescription"><%= subreddit.description %></div>
+        <div id="subredditSidebar"><%- subreddit.sidebar %></div>
     <% } %>
-    <div id="subredditDescription"><%= subreddit.description %></div>
-    <div id="subredditSidebar"><%- subreddit.sidebar %></div>
+    <% if (locals.includePreview) { %>
+    <div id="subredditDescription"></div>
+    <div id="subredditSidebar"></div>
     <% } %>
 </div>

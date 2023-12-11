@@ -1,0 +1,49 @@
+@import "/css/components/constants.css";
+
+div {
+  color: var(--main-font-color);
+}
+
+/* PAGE LAYOUT */
+body {
+    margin: 0px;
+    overflow-x: hidden;
+    background-color: var(--bg-color-black);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: 100px 1fr;
+    height: 100vh;
+    overflow-wrap: break-word;
+}
+
+.feed {
+    grid-column: 1 / 2;
+    background-color: black;
+    overflow-wrap: break-word;
+}
+
+/* MISC */
+.smallLink{
+    color: rgb(143, 143, 143);
+    text-decoration: none;
+  }
+  
+  .smallLink:hover {
+    color: var(--main-font-color);
+    text-decoration: underline;
+  }
+
+  .pageNum {
+    height: 30px;
+    background-color: var(--alt-bg-color-two);
+    margin-left: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }

@@ -1,0 +1,118 @@
+
+/* MODAL STYLES */
+.modal {
+    background-color: rgb(224, 224, 224);
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    transform: translate(-50%, -300%);
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    transition: transform .5s;
+    z-index: 2;
+  }
+  
+.closeModal {
+    color: black;
+    text-align: right;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+  
+.modalOpened {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    visibility: visible;
+}
+  
+.modalText {
+    color: black;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+  
+.modalInput {
+    height: 25px;
+    width: 75%;
+    align-self: center;
+    border-radius: 7px;
+    border-style:none;
+}
+  
+.modalSubmit {
+    margin-top: 30px;
+    width: 100px;
+    height: 30px;
+    align-self: center;
+    background-color: white;
+    border-style:none;
+    border-radius: 5px;
+}
+  
+.modalSubmit:hover {
+    cursor:pointer;
+}
+  
+.modalSubmit:active {
+    margin-top: 32px;
+    font-weight: bold;
+}
+  
+.modalSubmit::placeholder {
+    color: grey;
+}
+  
+.modalError {
+    text-align: center;
+}
+  
+.modalForm
+{
+    display: flex;
+    flex-direction: column
+}
+  
+#loginModal {
+    width: 300px;
+    height: 300px;
+}
+  
+#signupModal {
+    width: 500px; 
+    height: 500px;
+}
+  
+.incorrectFormat
+{
+    color: red;
+}
+  
+.correctFormat
+{
+    color: green;
+}
+  
+.signupRequirements
+{
+    width: 75%;
+    align-self: center;
+}
+  
+.modalSuccess {
+    color: black;
+    align-self: center;
+}
+  
+.errMsg{
+    color: red;
+}
+  
+#passwordLoginInput
+{
+    margin-top: 20px;
+}

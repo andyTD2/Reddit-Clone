@@ -1,0 +1,21 @@
+.filters {
+    align-self: flex-end;
+    flex: 1;
+    padding-left: 5px;
+  }
+  
+.filters a {
+background-color: var(--main-bg-color);
+text-decoration: none;
+color: var(--link-font-color);
+padding-left: 3px;
+padding-right: 3px;
+border-style: solid;
+border-width: 1px;
+border-color: var(--alt-bg-color-light);
+}
+
+.currentFilter {
+color: var(--current-selection) !important;
+padding: 4px;
+}

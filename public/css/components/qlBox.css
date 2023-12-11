@@ -1,0 +1,22 @@
+.ql-container {
+    background-color: var(--alt-bg-color-two);
+
+}
+
+.ql-header{
+    color: var(--main-font-color) !important;
+}
+
+.ql-stroke {
+    stroke: var(--main-font-color) !important;
+}
+
+.ql-editor
+{
+    height: 300px !important;
+}
+
+.ql-active
+{
+    background-color: rgb(199, 48, 17) !important;
+}

@@ -1,0 +1,36 @@
+@import "/css/components/global.css";
+@import "/css/components/header.css";
+@import "/css/components/modals.css";
+@import "/css/components/sidebar.css";
+@import "/css/components/vote.css";
+@import "/css/components/postHeader.css";
+@import "/css/components/filters.css";
+@import "/css/components/commentFeed.css";
+
+
+.postHeader {
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 10px;
+    padding-bottom: 30px;
+
+    border-bottom-style: solid;
+    border-width: 2px;
+    border-color: var(--alt-bg-color-three);
+
+    overflow-x: hidden;
+}
+
+
+.postTop {
+    font-size: var(--font-size-small);
+}
+
+.postBody {
+    padding-top: 10px;
+}
+
+.filters {
+    padding-left: 30px;
+}
+

@@ -1,0 +1,50 @@
+/* SIDEBAR STYLES */
+.sidebar {
+    float: right;
+    width: 300px;
+    background-color: var(--main-bg-color);
+    min-height: 300px;
+    padding: 10px; 
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+  
+.sidebarBtn {
+    background-color: var(--alt-bg-color-two);
+    font-size: 1.75rem;
+    text-align: center;
+    text-decoration: none;
+    margin-bottom: 2px;
+}
+
+.sidebar a {
+    color: var(--link-font-color);
+}
+
+.sidebar a:hover {
+    cursor: pointer
+}
+
+#subredditDescription
+{
+    margin-top: 10px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--alt-bg-color-two);
+    padding: 5px;
+}
+
+#subredditSidebar > p
+{
+    margin: 0;
+}
+
+#subredditSidebar
+{
+    margin-top: 10px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: var(--alt-bg-color-two);
+    padding: 5px;
+}

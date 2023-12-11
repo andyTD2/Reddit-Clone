@@ -4,9 +4,8 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <TITLE> all subreddits</TITLE>
-    <link rel="stylesheet" href="/css/styles.css">
-	<link rel="stylesheet" href="/css/createPost.css">
+        <TITLE> Create Post </TITLE>
+    <link rel="stylesheet" href="/css/views/createPost.css">
     </head>
     <body>
 
@@ -26,18 +25,18 @@
 			</div>
 			<div class="feed">
 				<%- include('partials/subredditSidebar') %>
-                <form action="/r/<%= subreddit.name %>/post/newPost" method="POST" id="createPostForm">
+                <form action="/r/<%= subreddit.name %>/post/newPost" method="POST" id="createPostForm" class="form">
                     <label for="postTitle" class="createFormLabelRequired">Post Title (required)</label>
-                    <input type="text" class="createPostText smallInputBox" id="postTitle" name="postTitle">
+                    <input type="text" class="formText smallInputBox formSpaceBelow" id="postTitle" name="postTitle">
 					<label for="postLink">Link</label>
-					<input type="text" class="createPostText smallInputBox" id="postLink" name="postLink"> 
-					 <div id="createPostCheckbox">
+					<input type="text" class="formText smallInputBox" id="postLink" name="postLink"> 
+					 <div id="createPostCheckbox" class="checkbox formSpaceBelow">
 						<input type="checkbox" id="useArticleTitle" class="checkBox" name="useArticleTitle">
 						<label for="useArticleTitle" class="checkboxLabel">Use article title</label>
 					</div>
                     <label for="content">Body</label>
-                    <textarea class="createPostText" id="postContent" name="postContent" rows="20" cols="25"></textarea>
-					<input type="submit" id="createPostSubmit" value="Submit">
+                    <textarea class="formText" id="postContent" name="postContent" rows="20" cols="25"></textarea>
+					<input type="submit" id="createPostSubmit" value="Submit" class="formSubmit">
 					<div id="createPostError" class="errMsg"></div>
                 </form>
 			</div>

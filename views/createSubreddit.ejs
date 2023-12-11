@@ -4,10 +4,9 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="/css/styles.css">
-        <link rel="stylesheet" href="/css/createSubreddit.css">
+        <link rel="stylesheet" href="/css/views/createSubreddit.css">
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-        <TITLE> CREATE SUBREDDIT </TITLE>
+        <TITLE> Create Subreddit </TITLE>
     </head>
     <body>
 		<%- include('partials/loginModal') %>
@@ -27,12 +26,12 @@
 			</div>
 			
 			<div class="feed">
-                <%- include('partials/subredditSidebar') %>
-                <form action="/createSubreddit" method="POST" id="createSubredditForm">
+                <%- include('partials/subredditSidebar', {includePreview: true}) %>
+                <form action="/createSubreddit" method="POST" id="createSubredditForm" class="form">
                     <label for="subredditName">Subreddit Name</label>
-                    <input type="text" class="createSubredditText smallInputBox" id="subredditName" name="subredditName" maxlength="30">
+                    <input type="text" class="formText smallInputBox formSpaceBelow" id="subredditName" name="subredditName" maxlength="30">
                     <label for="description">Description</label>
-                    <input type="text" class="createSubredditText smallInputBox" id="description" name="description">
+                    <input type="text" class="formText smallInputBox formSpaceBelow" id="description" name="description">
                     <label for="sidebar">Sidebar</label>
                     <div id="editor" name="sidebar">
                     </div>

@@ -1,3 +1,11 @@
+@import "/css/components/global.css";
+@import "/css/components/header.css";
+@import "/css/components/modals.css";
+@import "/css/components/postHeader.css";
+@import "/css/components/sidebar.css";
+@import "/css/components/vote.css";
+
+
 #searchFormExtended
 {
     margin-left: 10px;
@@ -45,8 +53,6 @@
     font-size: 1.5em;
     width: 275px;
 }
-
-
 
 .formSubmit
 {

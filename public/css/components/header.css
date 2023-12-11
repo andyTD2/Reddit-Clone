@@ -1,0 +1,99 @@
+/* HEADER STYLES */
+
+.header {
+    display: flex;
+    flex-direction: column;
+    grid-template-rows: min-content, auto;
+    grid-column: 1 / -1;
+    border-bottom-width: 1px;
+    border-bottom-color: var(--alt-bg-color-two);
+    border-bottom-style: solid;
+  }
+  
+.headerControls {
+    display: flex;
+    flex: 1;
+}
+
+/* TOPBAR STYLES */
+.topbar {
+    background-color: var(--main-bg-color);
+    color: rgb(16, 16, 16);
+    height: min-content;
+    opacity: 0.95;
+    padding-left: 5px;
+}
+
+#topbarListOfSubreddits {
+    display: flex;
+    flex-direction: row;
+}
+
+#topbarListOfSubreddits p{
+    margin: 0;
+}
+
+#topbarRight {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: row;
+    margin-left: auto
+}
+
+.subscribedSub {
+    margin-left: 5px;
+    color: white;
+    text-decoration: none;
+}
+
+.subscribedSub:hover {
+    text-decoration: underline;
+}
+
+/* SUBREDDIT NAME */
+
+.subName{
+align-self: flex-end;
+padding-left: 10px;
+margin-right: 10px;
+text-decoration: none;
+color: var(--link-font-color);
+font-size: 2rem;
+}
+
+.subName:hover {
+    text-decoration: underline;
+}
+
+/* ACCOUNT CONTROLS + SEARCH BOX */
+.searchbar {
+background-color: var(--alt-bg-color-three);
+}
+
+.searchBox {
+padding-top: 3px;
+padding-bottom: 3px;
+}
+
+.searchSubmit {
+width: 20px;
+padding-bottom: 3px;
+vertical-align: bottom;
+}
+
+.accountControls{
+background-color: var(--alt-bg-color-three);
+padding: 3px 3px;
+margin-left: auto;
+}
+
+.accountControls a {
+color: var(--link-font-color);
+text-decoration: none;
+padding-left: 5px;
+padding-right: 5px;
+}
+
+.accountControls a:hover {
+    cursor: pointer;
+}

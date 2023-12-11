@@ -1,0 +1,17 @@
+/* VOTE INTERFACE STYLES */
+.vote {
+    align-self: center;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .vote img {
+    width: 20px;
+    height: 15px;
+  }
+  
+  .voteCount{
+    align-self: center;
+    color: var(--link-font-color);
+  }
